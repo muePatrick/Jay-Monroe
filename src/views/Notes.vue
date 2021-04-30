@@ -2,7 +2,7 @@
   <div class="viewRoot">
     <div class="columns">
       <div class="column is-2">
-        <aside class="menu">
+        <aside class="menu eighty-scrollable">
           <p class="menu-label">Users</p>
           <ul class="menu-list">
             <li v-for="(user, userId) in user" :key="userId">
@@ -31,87 +31,40 @@
         </aside>
       </div>
       <div class="column">
-        <textarea
-          v-if="selectedNote != ''"
-          style="width: 100%; height: 100%; margin-top: 10px"
-          v-model="notes[selectedNote].content"
-        ></textarea>
-      </div>
-      <div class="column">
-        <div
-          v-html="renderedContent"
-          v-if="selectedNote != ''"
-          style="width: 100%; height: 100%; margin-top: 10px"
-        ></div>
+        <editor ref="toastuiEditor" class="space-out" height="100%"/>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { Editor } from "@toast-ui/vue-editor";
+
 import fakeData from "@/data/fakeData";
 import fakeUser from "@/data/fakeUser";
 
-import MarkdownIt from "markdown-it";
-import markdownItAnchor from "markdown-it-anchor";
-import markdownItTocDoneRight from "markdown-it-toc-done-right";
-import markdownItMermaid from "@liradb2000/markdown-it-mermaid";
-import markdownItEmoji from "markdown-it-emoji";
-import markdownItMark from "markdown-it-mark";
-import markdownItKatex from "@iktakahiro/markdown-it-katex";
-import markdownItTaskLists from "markdown-it-task-lists";
-import markdownItFootnote from "markdown-it-footnote";
-import markdownItHighlightjs from "markdown-it-highlightjs";
-
 export default {
-  components: {},
+  components: {
+    editor: Editor,
+  },
   props: ["placeholderProp"],
   data() {
     return {
       notes: fakeData,
       user: fakeUser,
       selectedNote: "",
-      rawContent: "",
-      renderedContent: "",
-      md: undefined, //HACK find better place for this binding
     };
   },
   computed: {},
   watch: {},
   created: function () {
-    this.md = new MarkdownIt({
-      html: false,
-      xhtmlOut: true,
-      typographer: true,
-    })
-      .use(markdownItEmoji)
-      .use(markdownItMark)
-      .use(markdownItAnchor)
-      .use(markdownItTocDoneRight)
-      .use(markdownItKatex)
-      .use(markdownItTaskLists, { enabled: false })
-      .use(markdownItFootnote)
-      .use(markdownItMermaid, {
-        startOnLoad: false,
-        securityLevel: true,
-        theme: "default",
-      })
-      .use(markdownItHighlightjs, { inline: true });
     return true;
   },
   methods: {
     selectNote: function (uuid) {
-      // BUG Clicking a already opened note deletes mermaid diagrams in render view
       this.selectedNote = uuid;
-      this.renderedContent = this.md.render(
-        this.notes[this.selectedNote].content
-      );
+      this.$refs.toastuiEditor.invoke('setMarkdown', this.notes[uuid].content, 'false');
       return true;
-    },
-    rerender: function () {
-      this.renderedContent = this.md.render(
-        this.notes[this.selectedNote].content
-      );
     },
   },
 };
@@ -119,6 +72,26 @@ export default {
 
 <style scoped>
 @import "../css/bulma.css";
+@import "../../node_modules/codemirror/lib/codemirror.css";
+@import "../../node_modules/@toast-ui/editor/dist/toastui-editor.css";
 </style>
 
-<style lang="css" scoped></style>
+<style lang="css" scoped>
+
+div {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.eighty-scrollable {
+  height: calc(100vh - 52px);
+  overflow-y: scroll;
+}
+
+.space-out {
+  margin: 0px;
+  height: 100vh;
+}
+
+</style>
