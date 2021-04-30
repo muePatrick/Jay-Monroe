@@ -38,11 +38,11 @@
         ></textarea>
       </div>
       <div class="column">
-        <div v-html="renderedContent"
+        <div
+          v-html="renderedContent"
           v-if="selectedNote != ''"
           style="width: 100%; height: 100%; margin-top: 10px"
-        >
-        </div>
+        ></div>
       </div>
     </div>
   </div>
@@ -73,16 +73,16 @@ export default {
       selectedNote: "",
       rawContent: "",
       renderedContent: "",
-      md: undefined  //HACK find better place for this binding
+      md: undefined, //HACK find better place for this binding
     };
   },
   computed: {},
   watch: {},
-  created: function() {
+  created: function () {
     this.md = new MarkdownIt({
       html: false,
       xhtmlOut: true,
-      typographer: true
+      typographer: true,
     })
       .use(markdownItEmoji)
       .use(markdownItMark)
@@ -94,25 +94,26 @@ export default {
       .use(markdownItMermaid, {
         startOnLoad: false,
         securityLevel: true,
-        theme: "default"
+        theme: "default",
       })
       .use(markdownItHighlightjs, { inline: true });
     return true;
   },
   methods: {
-    selectNote: function(uuid) {
+    selectNote: function (uuid) {
+      // BUG Clicking a already opened note deletes mermaid diagrams in render view
       this.selectedNote = uuid;
       this.renderedContent = this.md.render(
         this.notes[this.selectedNote].content
       );
       return true;
     },
-    rerender: function() {
+    rerender: function () {
       this.renderedContent = this.md.render(
         this.notes[this.selectedNote].content
       );
-    }
-  }
+    },
+  },
 };
 </script>
 
