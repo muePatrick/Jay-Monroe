@@ -15,29 +15,22 @@
         </li>
       </ul>
       <p class="menu-label">Notes</p>
-      <!-- TODO move ul to own component to enable recursion -->
-      <ul class="menu-list">
-        <li
-          v-for="(note, noteId) in notes"
-          :key="noteId"
-          v-on:click="selectNote(noteId)"
-        >
-          <a :class="{ 'is-active': noteId == selectedNote }">{{
-            note.title
-          }}</a>
-        </li>
-      </ul>
+      <tvul
+        :notes="notes"
+        :selectedNote="selectedNote"
+        @selectNote="selectNote($event)"
+      />
     </aside>
   </div>
 </template>
 
-<style scoped>
-@import "../css/bulma.css";
-</style>
-
 <script>
+import TreeviewUl from "@/components/TreeviewUl";
+
 export default {
-  components: {},
+  components: {
+    tvul: TreeviewUl
+  },
   props: ["user", "notes", "selectedNote"],
   data() {
     return {};
@@ -49,13 +42,16 @@ export default {
   },
   methods: {
     selectNote(uuid) {
-      console.log("emitting")
-      this.$emit('selectNote', uuid)
+      this.$emit("selectNote", uuid);
       return true;
-    },
-  },
+    }
+  }
 };
 </script>
+
+<style scoped>
+@import "../css/bulma.css";
+</style>
 
 <style scoped>
 .viewRoot {

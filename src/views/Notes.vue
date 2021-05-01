@@ -2,7 +2,13 @@
   <div class="viewRoot">
     <div class="columns">
       <div class="column is-2">
-        <tv :user="user" :notes="notes" :selectedNote="selectedNote" class="eighty-scrollable" @selectNote="selectNote"/>
+        <tv
+          :user="user"
+          :notes="notes"
+          :selectedNote="selectedNote"
+          class="eighty-scrollable"
+          @selectNote="selectNote"
+        />
       </div>
       <div class="column">
         <editor ref="toastuiEditor" class="space-out" height="100%" />
@@ -37,12 +43,16 @@ export default {
   },
   methods: {
     selectNote(uuid) {
-      this.selectedNote = uuid;
-      this.$refs.toastuiEditor.invoke(
-        "setMarkdown",
-        this.notes[uuid].content,
-        "false"
-      );
+      let note;
+      uuid.forEach(currentUuid => {
+        if (!note) {
+          note = this.notes[currentUuid];
+        } else {
+          note = note["subnotes"][currentUuid];
+        }
+      });
+      this.$refs.toastuiEditor.invoke("setMarkdown", note.content, "false");
+      this.selectedNote = uuid.pop();
       return true;
     }
   }
