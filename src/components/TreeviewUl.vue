@@ -45,6 +45,7 @@
           :selectedNote="selectedNote"
           @selectNote="selectNote([noteId, ...$event])"
           @removeNote="removeNote2(note.subnotes, $event)"
+          @forceSave="forceSave"
         />
       </li>
     </ul>
@@ -91,13 +92,18 @@ export default {
         subnotes: {}
       };
       this.forceRefresh = !this.forceRefresh; // HACK
+      this.$emit("forceSave");
     },
     removeNote(uuid) {
       this.$emit("removeNote", uuid);
     },
     removeNote2(notes, uuid) {
       delete notes[uuid];
+      this.$emit("forceSave");
       this.forceRefresh = !this.forceRefresh; // HACK
+    },
+    forceSave() {
+      this.$emit("forceSave");
     }
   }
 };

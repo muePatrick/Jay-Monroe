@@ -8,17 +8,24 @@
           :selectedNote="selectedNote"
           class="eighty-scrollable"
           @selectNote="selectNote"
+          @forceSave="forceSave"
         />
       </div>
-      <div class="column">
+      <div class="column" :class="{ lock: !selectedNote }">
         <input
           class="input is-medium"
           type="text"
-          placeholder="Text input"
+          placeholder="Title"
           v-model="currentNote.title"
         />
         <div class="editor">
-          <editor ref="toastuiEditor" class="space-out" height="100%" />
+          <editor
+            ref="toastuiEditor"
+            class="space-out"
+            height="100%"
+            :options="editorOptions"
+            @change="onEditorChange"
+          />
         </div>
       </div>
     </div>
@@ -42,12 +49,25 @@ export default {
       notes: fakeData,
       user: fakeUser,
       selectedNote: "",
-      currentNote: { title: "" }
+      currentNote: { title: "" },
+      editorOptions: {
+        usageStatistics: false
+      }
     };
   },
   computed: {},
-  watch: {},
+  watch: {
+    notes: {
+      deep: true,
+      handler() {
+        localStorage.setItem("savedNotes", JSON.stringify(this.notes));
+      }
+    }
+  },
   created() {
+    if (localStorage.getItem("savedNotes")) {
+      this.notes = JSON.parse(localStorage.getItem("savedNotes"));
+    }
     return true;
   },
   methods: {
@@ -70,6 +90,13 @@ export default {
       this.selectedNote = uuid.pop();
       this.currentNote = note;
       return true;
+    },
+    onEditorChange() {
+      this.currentNote.content = this.$refs.toastuiEditor.invoke("getMarkdown");
+    },
+    forceSave() {
+      console.log("notes fs")
+      localStorage.setItem("savedNotes", JSON.stringify(this.notes));
     }
   }
 };
@@ -96,6 +123,12 @@ div {
 .space-out {
   margin: 0px;
   height: 100vh;
+}
+
+.lock {
+  pointer-events: none;
+  filter: blur(1.5px) grayscale();
+  user-select: none;
 }
 
 .editor {

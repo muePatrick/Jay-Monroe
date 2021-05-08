@@ -16,7 +16,10 @@
       </ul>
       <p class="menu-label">Chat</p>
       <chat />
-      <p class="menu-label">Notes</p>
+      <p class="menu-label">
+        Notes
+        <font-awesome-icon :icon="['fas', 'plus-square']" @click="addNote" />
+      </p>
       <tvul
         class="scrollable"
         :key="forceRefresh"
@@ -24,6 +27,7 @@
         :selectedNote="selectedNote"
         @selectNote="selectNote($event)"
         @removeNote="removeNote"
+        @forceSave="forceSave"
       />
     </aside>
   </div>
@@ -50,6 +54,15 @@ export default {
     return true;
   },
   methods: {
+    addNote() {
+      this.notes[Date.now()] = {
+        title: "New Note",
+        content: "",
+        subnotes: {}
+      };
+      this.$emit("forceSave");
+      this.forceRefresh = !this.forceRefresh; //HACK
+    },
     selectNote(uuid) {
       this.$emit("selectNote", uuid);
       return true;
@@ -58,6 +71,10 @@ export default {
       delete this.notes[uuid];
       this.forceRefresh = !this.forceRefresh; //HACK
       this.$emit("selectNote", undefined);
+      this.$emit("forceSave");
+    },
+    forceSave() {
+      this.$emit("forceSave");
     }
   }
 };
