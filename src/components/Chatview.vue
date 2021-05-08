@@ -1,18 +1,20 @@
 <template>
   <div class="viewRoot">
-    <ul class="menu-list">
+    <ul class="menu-list chat-items">
       <li v-for="(msg, msgId) in messages" :key="msgId">
         [{{ msg.date }}] {{ msg.from }}: {{ msg.message }}
       </li>
     </ul>
     <textarea
+      rows="3"
+      class="textarea has-fixed-size is-small"
       v-model="enteredMsg"
-      placeholder="enter message (ctrl + enter to send)"
+      placeholder="Enter Message (ctrl + enter to send)"
       ref="messageInput"
       v-on:keydown.ctrl.enter.prevent
       v-on:keyup.ctrl.enter="sendMsg"
     ></textarea>
-    <button v-on:click="sendMsg">Send</button>
+    <button class="button chat-button" v-on:click="sendMsg">Send</button>
   </div>
 </template>
 
@@ -70,5 +72,14 @@ export default {
   margin: 0;
   border: 0;
   padding: 0;
+}
+
+.chat-button {
+  width: 100%;
+}
+
+.chat-items {
+  font-size: 12px;
+  font-family: 'Courier New', Courier, monospace;
 }
 </style>
