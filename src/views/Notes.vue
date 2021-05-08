@@ -11,7 +11,15 @@
         />
       </div>
       <div class="column">
-        <editor ref="toastuiEditor" class="space-out" height="100%" />
+        <input
+          class="input is-medium"
+          type="text"
+          placeholder="Text input"
+          v-model="currentNote.title"
+        />
+        <div class="editor">
+          <editor ref="toastuiEditor" class="space-out" height="100%" />
+        </div>
       </div>
     </div>
   </div>
@@ -33,7 +41,8 @@ export default {
     return {
       notes: fakeData,
       user: fakeUser,
-      selectedNote: ""
+      selectedNote: "",
+      currentNote: { title: "" }
     };
   },
   computed: {},
@@ -43,6 +52,12 @@ export default {
   },
   methods: {
     selectNote(uuid) {
+      if (uuid == undefined) {
+        this.selectedNote = "";
+        this.currentNote = { title: "" };
+        this.$refs.toastuiEditor.invoke("setMarkdown", "", "false");
+        return true;
+      }
       let note;
       uuid.forEach(currentUuid => {
         if (!note) {
@@ -53,6 +68,7 @@ export default {
       });
       this.$refs.toastuiEditor.invoke("setMarkdown", note.content, "false");
       this.selectedNote = uuid.pop();
+      this.currentNote = note;
       return true;
     }
   }
@@ -80,5 +96,10 @@ div {
 .space-out {
   margin: 0px;
   height: 100vh;
+}
+
+.editor {
+  height: calc(100% - 50px);
+  overflow-y: hidden;
 }
 </style>

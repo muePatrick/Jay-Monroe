@@ -2,6 +2,30 @@
   <div class="viewRoot">
     <ul class="notesList" :key="forceRefresh">
       <li v-for="(note, noteId) in notes" :key="noteId">
+        <div class="dropdown is-hoverable color-rotate">
+          <div class="dropdown-trigger">
+            <font-awesome-icon
+              class="menudot"
+              :icon="['fas', 'ellipsis-h']"
+              style="cursor: pointer;"
+            />
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+            <div class="dropdown-content">
+              <a href="#" class="dropdown-item" @click="addSubnote(note)">
+                Add Subnote
+              </a>
+              <a href="#" class="dropdown-item" @click="removeNote(noteId)">
+                Remove
+              </a>
+              <hr class="dropdown-divider" />
+              <a href="#" class="dropdown-item">
+                More...
+              </a>
+            </div>
+          </div>
+        </div>
+
         <a
           :class="{ 'is-active': noteId == selectedNote }"
           v-on:click="selectNote([noteId])"
@@ -14,11 +38,13 @@
           @click="toggleNoteCollapse(noteId)"
           style="cursor: pointer;"
         />
+
         <tvul
           v-if="note.subnotes && !note.collapsed"
           :notes="note.subnotes"
           :selectedNote="selectedNote"
           @selectNote="selectNote([noteId, ...$event])"
+          @removeNote="removeNote2(note.subnotes, $event)"
         />
       </li>
     </ul>
@@ -54,6 +80,24 @@ export default {
       this.notes[uuid]["collapsed"] =
         this.notes[uuid]["collapsed"] == true ? false : true;
       this.forceRefresh = !this.forceRefresh; // HACK
+    },
+    addSubnote(note) {
+      if (note.subnotes == undefined) {
+        note.subnotes = {};
+      }
+      note.subnotes[Date.now()] = {
+        title: "New Note",
+        content: "",
+        subnotes: {}
+      };
+      this.forceRefresh = !this.forceRefresh; // HACK
+    },
+    removeNote(uuid) {
+      this.$emit("removeNote", uuid);
+    },
+    removeNote2(notes, uuid) {
+      delete notes[uuid];
+      this.forceRefresh = !this.forceRefresh; // HACK
     }
   }
 };
@@ -72,29 +116,37 @@ export default {
 }
 
 .notesList a {
-  color: #9B9A97;
+  color: #9b9a97;
   margin-right: 5px;
   user-select: none;
 }
 
 .notesList {
-  color: #9B9A97;
+  color: #9b9a97;
 }
 
 .notesList a:hover {
-  color: rgba(155,154,151,0.4);
+  color: rgba(155, 154, 151, 0.4);
 }
 
 .is-active {
   font-weight: bold;
 }
 
-.notesList a::before {
+.notesList2 a::before {
   content: "•";
   color: red;
   animation: huerotate 5s linear infinite;
   margin-right: 5px;
   margin-left: 5px;
+}
+
+.menudot {
+  color: red;
+  animation: huerotate 5s linear infinite;
+  margin-right: 5px;
+  margin-left: 5px;
+  transform: scale(0.7);
 }
 
 @keyframes huerotate {
@@ -108,8 +160,5 @@ export default {
 
 .notesList ul {
   margin-left: 20px;
-}
-
-.notesList ul a::before {
 }
 </style>

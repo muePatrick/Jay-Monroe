@@ -5,11 +5,14 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    count: 0
+    draggedNote: undefined,
+    draggedUuid: ""
   },
   mutations: {
-    increment(state) {
-      state.count++;
+    dragNote(state, note) {
+      state.draggedNote = note.note;
+      state.draggedUuid = note.uuid;
+      console.log(note);
     }
   },
   actions: {},

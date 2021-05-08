@@ -16,9 +16,11 @@
       </ul>
       <p class="menu-label">Notes</p>
       <tvul
+        :key="forceRefresh"
         :notes="notes"
         :selectedNote="selectedNote"
         @selectNote="selectNote($event)"
+        @removeNote="removeNote"
       />
     </aside>
   </div>
@@ -33,7 +35,9 @@ export default {
   },
   props: ["user", "notes", "selectedNote"],
   data() {
-    return {};
+    return {
+      forceRefresh: false
+    };
   },
   computed: {},
   watch: {},
@@ -44,6 +48,11 @@ export default {
     selectNote(uuid) {
       this.$emit("selectNote", uuid);
       return true;
+    },
+    removeNote(uuid) {
+      delete this.notes[uuid];
+      this.forceRefresh = !this.forceRefresh; //HACK
+      this.$emit("selectNote", undefined);
     }
   }
 };
