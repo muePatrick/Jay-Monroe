@@ -5,6 +5,14 @@
         [{{ msg.date }}] {{ msg.from }}: {{ msg.message }}
       </li>
     </ul>
+    <textarea
+      v-model="enteredMsg"
+      placeholder="enter message (ctrl + enter to send)"
+      ref="messageInput"
+      v-on:keydown.ctrl.enter.prevent
+      v-on:keyup.ctrl.enter="sendMsg"
+    ></textarea>
+    <button v-on:click="sendMsg">Send</button>
   </div>
 </template>
 
@@ -17,9 +25,11 @@ import fakeMessages from "@/data/fakeMessages";
 
 export default {
   components: {},
+  props: [],
   data() {
     return {
       messages: fakeMessages,
+      enteredMsg: "",
     };
   },
   computed: {},
@@ -27,7 +37,31 @@ export default {
   created() {
     return true;
   },
-  methods: {},
+  methods: {
+    uuidv4() {
+      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+        (
+          c ^
+          (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+        ).toString(16)
+      );
+    },
+    sendMsg() {
+      if (this.enteredMsg === "") {
+        alert("Not sending empty message");
+      } else {
+        alert('Sending "' + this.enteredMsg + '"');
+        this.messages[this.uuidv4()] = {
+          from: "Me",
+          date: new Date().toLocaleString(),
+          message: this.enteredMsg,
+        };
+      }
+      this.enteredMsg = "";
+      this.$refs.messageInput.focus();
+      return true;
+    },
+  },
 };
 </script>
 
