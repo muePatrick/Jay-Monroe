@@ -14,6 +14,8 @@
           >
         </li>
       </ul>
+      <p class="menu-label">Chat</p>
+      <chat :messages="messages" />
       <p class="menu-label">Notes</p>
       <tvul
         :notes="notes"
@@ -26,12 +28,14 @@
 
 <script>
 import TreeviewUl from "@/components/TreeviewUl";
+import Chatview from "@/components/Chatview";
 
 export default {
   components: {
-    tvul: TreeviewUl
+    tvul: TreeviewUl,
+    chat: Chatview,
   },
-  props: ["user", "notes", "selectedNote"],
+  props: ["user", "notes", "selectedNote", "messages"],
   data() {
     return {};
   },
@@ -44,8 +48,8 @@ export default {
     selectNote(uuid) {
       this.$emit("selectNote", uuid);
       return true;
-    }
-  }
+    },
+  },
 };
 </script>
 
