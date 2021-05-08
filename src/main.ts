@@ -4,10 +4,10 @@ import router from "./router";
 import store from "./store";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faMinusSquare, faPlusSquare, faStickyNote, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faExclamationTriangle, faMinusSquare, faPlusSquare, faStickyNote, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-library.add(faStickyNote, faUser, faPlusSquare, faMinusSquare);
+library.add(faStickyNote, faUser, faPlusSquare, faMinusSquare, faExclamationTriangle);
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 

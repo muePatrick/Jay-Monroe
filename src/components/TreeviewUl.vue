@@ -1,6 +1,6 @@
 <template>
   <div class="viewRoot">
-    <ul class="notesList">
+    <ul class="notesList" :key="forceRefresh">
       <li v-for="(note, noteId) in notes" :key="noteId">
         <a
           :class="{ 'is-active': noteId == selectedNote }"
@@ -8,12 +8,14 @@
           >{{ note.title }}</a
         >
         <font-awesome-icon
-          :icon="['fas', noteId.collapsed?'plus-square':'minus-square']"
-          :click="toggleNoteCollapse(noteId)"
+          v-if="note.subnotes"
+          class="smaller-icon"
+          :icon="['fas', note.collapsed ? 'plus-square' : 'minus-square']"
+          @click="toggleNoteCollapse(noteId)"
           style="cursor: pointer;"
         />
         <tvul
-          v-if="note.subnotes"
+          v-if="note.subnotes && !note.collapsed"
           :notes="note.subnotes"
           :selectedNote="selectedNote"
           @selectNote="selectNote([noteId, ...$event])"
@@ -34,7 +36,9 @@ export default {
   },
   props: ["notes", "selectedNote"],
   data() {
-    return {};
+    return {
+      forceRefresh: false
+    };
   },
   computed: {},
   watch: {},
@@ -49,7 +53,7 @@ export default {
     toggleNoteCollapse(uuid) {
       this.notes[uuid]["collapsed"] =
         this.notes[uuid]["collapsed"] == true ? false : true;
-      console.log(this.notes[uuid]);
+      this.forceRefresh = !this.forceRefresh; // HACK
     }
   }
 };
@@ -58,21 +62,48 @@ export default {
 <style scoped>
 .viewRoot {
   margin: 0;
-  margin-bottom: 10px;
   border: 0;
   padding: 0;
+  margin-bottom: 10px;
+}
+
+.smaller-icon {
+  transform: scale(0.75);
 }
 
 .notesList a {
-  color: #555555;
+  color: #9B9A97;
   margin-right: 5px;
+  user-select: none;
+}
+
+.notesList {
+  color: #9B9A97;
+}
+
+.notesList a:hover {
+  color: rgba(155,154,151,0.4);
+}
+
+.is-active {
+  font-weight: bold;
 }
 
 .notesList a::before {
   content: "•";
   color: red;
+  animation: huerotate 5s linear infinite;
   margin-right: 5px;
   margin-left: 5px;
+}
+
+@keyframes huerotate {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
 }
 
 .notesList ul {

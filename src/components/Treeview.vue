@@ -58,5 +58,6 @@ export default {
   margin: 0;
   border: 0;
   padding: 0;
+  background-color: #ebeced;
 }
 </style>
