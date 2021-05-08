@@ -14,6 +14,8 @@
           >
         </li>
       </ul>
+      <p class="menu-label">Chat</p>
+      <chat :messages="messages" />
       <p class="menu-label">Notes</p>
       <tvul
         :key="forceRefresh"
@@ -28,10 +30,12 @@
 
 <script>
 import TreeviewUl from "@/components/TreeviewUl";
+import Chatview from "@/components/Chatview";
 
 export default {
   components: {
-    tvul: TreeviewUl
+    tvul: TreeviewUl,
+    chat: Chatview
   },
   props: ["user", "notes", "selectedNote"],
   data() {
