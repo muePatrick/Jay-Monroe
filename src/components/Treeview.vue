@@ -15,9 +15,10 @@
         </li>
       </ul>
       <p class="menu-label">Chat</p>
-      <chat :messages="messages" />
+      <chat />
       <p class="menu-label">Notes</p>
       <tvul
+        class="scrollable"
         :key="forceRefresh"
         :notes="notes"
         :selectedNote="selectedNote"

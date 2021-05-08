@@ -1,6 +1,9 @@
 <template>
   <div class="viewRoot">
-    <ul class="menu-list chat-items">
+    <ul
+      class="menu-list chat-items"
+      ref="messageList"
+      style="overflow-y: auto; height: 100px">
       <li v-for="(msg, msgId) in messages" :key="msgId">
         [{{ msg.date }}] {{ msg.from }}: {{ msg.message }}
       </li>
@@ -40,7 +43,7 @@ export default {
     return true;
   },
   methods: {
-    //   TODO is UUID generator safe against duplicates? Safer solutions possible.
+    // TODO is UUID generator safe against duplicates? Safer solutions possible.
     uuidv4() {
       return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
         (
