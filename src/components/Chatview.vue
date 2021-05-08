@@ -1,6 +1,11 @@
 <template>
   <div class="viewRoot">
-    <ul class="menu-list">
+    <ul
+      class="menu-list"
+      ref="messageList"
+      style="overflow-y: auto; height: 100px"
+    >
+      <!-- TODO move style to css and adjust height -->
       <li v-for="(msg, msgId) in messages" :key="msgId">
         [{{ msg.date }}] {{ msg.from }}: {{ msg.message }}
       </li>
@@ -38,6 +43,7 @@ export default {
     return true;
   },
   methods: {
+    //   TODO is UUID generator safe against duplicates? Safer solutions possible.
     uuidv4() {
       return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
         (
@@ -61,6 +67,14 @@ export default {
       this.$refs.messageInput.focus();
       return true;
     },
+  },
+  mounted() {
+    // scroll to bottom of chat messages
+    this.$refs.messageList.scrollTop = this.$refs.messageList.scrollHeight;
+  },
+  updated() {
+    // scroll to bottom of chat messages
+    this.$refs.messageList.scrollTop = this.$refs.messageList.scrollHeight;
   },
 };
 </script>
