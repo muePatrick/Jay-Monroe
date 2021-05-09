@@ -7,7 +7,7 @@
             <font-awesome-icon
               class="menudot"
               :icon="['fas', 'ellipsis-h']"
-              style="cursor: pointer;"
+              style="cursor: pointer"
             />
           </div>
           <div class="dropdown-menu" id="dropdown-menu3" role="menu">
@@ -19,9 +19,7 @@
                 Remove
               </a>
               <hr class="dropdown-divider" />
-              <a href="#" class="dropdown-item">
-                More...
-              </a>
+              <a href="#" class="dropdown-item"> More... </a>
             </div>
           </div>
         </div>
@@ -36,7 +34,7 @@
           class="smaller-icon"
           :icon="['fas', note.collapsed ? 'plus-square' : 'minus-square']"
           @click="toggleNoteCollapse(noteId)"
-          style="cursor: pointer;"
+          style="cursor: pointer"
         />
 
         <tvul
@@ -59,12 +57,12 @@
 <script>
 export default {
   components: {
-    tvul: () => import("@/components/TreeviewUl") // Recursions can not be loaded normally
+    tvul: () => import("@/components/TreeviewUl"), // Recursions can not be loaded normally
   },
   props: ["notes", "selectedNote"],
   data() {
     return {
-      forceRefresh: false
+      forceRefresh: false,
     };
   },
   computed: {},
@@ -89,7 +87,7 @@ export default {
       note.subnotes[Date.now()] = {
         title: "New Note",
         content: "",
-        subnotes: {}
+        subnotes: {},
       };
       this.forceRefresh = !this.forceRefresh; // HACK
       this.$emit("forceSave");
@@ -104,8 +102,8 @@ export default {
     },
     forceSave() {
       this.$emit("forceSave");
-    }
-  }
+    },
+  },
 };
 </script>
 
