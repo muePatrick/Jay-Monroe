@@ -3,7 +3,8 @@
     <ul
       class="menu-list chat-items"
       ref="messageList"
-      style="overflow-y: auto; height: 100px">
+      style="overflow-y: auto; height: 100px"
+    >
       <li v-for="(msg, msgId) in messages" :key="msgId">
         [{{ msg.date }}] {{ msg.from }}: {{ msg.message }}
       </li>

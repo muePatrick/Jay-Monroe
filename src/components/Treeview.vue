@@ -37,6 +37,8 @@
 import TreeviewUl from "@/components/TreeviewUl";
 import Chatview from "@/components/Chatview";
 
+import database from "@/data/pouchdb";
+
 export default {
   components: {
     tvul: TreeviewUl,
@@ -51,17 +53,25 @@ export default {
   computed: {},
   watch: {},
   created() {
+    database.connect();
+    database.read().then((t) => {
+      console.log(t);
+    });
     return true;
   },
   methods: {
     addNote() {
-      this.notes[Date.now()] = {
-        title: "New Note",
-        content: "",
-        subnotes: {}
-      };
-      this.$emit("forceSave");
-      this.forceRefresh = !this.forceRefresh; //HACK
+      // this.notes[Date.now()] = {
+      //   title: "New Note",
+      //   content: "",
+      //   subnotes: {}
+      // };
+      // this.$emit("forceSave");
+      // this.forceRefresh = !this.forceRefresh; //HACK
+      database.addTest();
+      database.read().then((t) => {
+        console.log(t);
+      });
     },
     selectNote(uuid) {
       this.$emit("selectNote", uuid);
