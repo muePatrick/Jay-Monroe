@@ -35,14 +35,14 @@
 
 <script>
 import TreeviewUl from "@/components/TreeviewUl";
-import Chatview from "@/components/Chatview";
+import Chat from "@/components/Chat";
 
 import database from "@/data/pouchdb";
 
 export default {
   components: {
     tvul: TreeviewUl,
-    chat: Chatview
+    chat: Chat
   },
   props: ["user", "notes", "selectedNote"],
   data() {

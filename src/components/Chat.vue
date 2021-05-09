@@ -6,7 +6,9 @@
       style="overflow-y: auto; height: 100px"
     >
       <li v-for="(msg, msgId) in messages" :key="msgId">
-        [{{ msg.date }}] {{ msg.from }}: {{ msg.message }}
+        <span class="chat-timestamp">[{{ msg.date }}] </span>
+        <span class="chat-sender">{{ msg.from }}: </span>
+        {{ msg.message }}
       </li>
     </ul>
     <textarea
@@ -94,5 +96,14 @@ export default {
 .chat-items {
   font-size: 12px;
   font-family: "Courier New", Courier, monospace;
+}
+
+.chat-timestamp {
+  font-weight: 900;
+  color: blue;
+}
+
+.chat-sender {
+  font-weight: 900;
 }
 </style>
