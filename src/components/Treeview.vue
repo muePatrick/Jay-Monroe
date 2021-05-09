@@ -40,12 +40,12 @@ import Chat from "@/components/Chat";
 export default {
   components: {
     tvul: TreeviewUl,
-    chat: Chat,
+    chat: Chat
   },
   props: ["user", "notes", "selectedNote"],
   data() {
     return {
-      forceRefresh: false,
+      forceRefresh: false
     };
   },
   computed: {},
@@ -58,7 +58,7 @@ export default {
       this.notes[Date.now()] = {
         title: "New Note",
         content: "",
-        subnotes: {},
+        subnotes: {}
       };
       this.$emit("forceSave");
       this.forceRefresh = !this.forceRefresh; //HACK
@@ -75,8 +75,8 @@ export default {
     },
     forceSave() {
       this.$emit("forceSave");
-    },
-  },
+    }
+  }
 };
 </script>
 

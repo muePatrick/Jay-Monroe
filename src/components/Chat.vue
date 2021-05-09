@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       messages: fakeMessages,
-      enteredMsg: "",
+      enteredMsg: ""
     };
   },
   computed: {},
@@ -48,7 +48,7 @@ export default {
   methods: {
     // TODO is UUID generator safe against duplicates? Safer solutions possible.
     uuidv4() {
-      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
         (
           c ^
           (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
@@ -63,13 +63,13 @@ export default {
         this.messages[this.uuidv4()] = {
           from: "Me",
           date: new Date().toLocaleString(),
-          message: this.enteredMsg,
+          message: this.enteredMsg
         };
       }
       this.enteredMsg = "";
       this.$refs.messageInput.focus();
       return true;
-    },
+    }
   },
   mounted() {
     // scroll to bottom of chat messages
@@ -78,7 +78,7 @@ export default {
   updated() {
     // scroll to bottom of chat messages
     this.$refs.messageList.scrollTop = this.$refs.messageList.scrollHeight;
-  },
+  }
 };
 </script>
 

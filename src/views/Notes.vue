@@ -95,7 +95,7 @@ export default {
       this.currentNote.content = this.$refs.toastuiEditor.invoke("getMarkdown");
     },
     forceSave() {
-      console.log("notes fs")
+      console.log("notes fs");
       localStorage.setItem("savedNotes", JSON.stringify(this.notes));
     }
   }

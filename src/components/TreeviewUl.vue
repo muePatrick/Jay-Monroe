@@ -57,12 +57,12 @@
 <script>
 export default {
   components: {
-    tvul: () => import("@/components/TreeviewUl"), // Recursions can not be loaded normally
+    tvul: () => import("@/components/TreeviewUl") // Recursions can not be loaded normally
   },
   props: ["notes", "selectedNote"],
   data() {
     return {
-      forceRefresh: false,
+      forceRefresh: false
     };
   },
   computed: {},
@@ -87,7 +87,7 @@ export default {
       note.subnotes[Date.now()] = {
         title: "New Note",
         content: "",
-        subnotes: {},
+        subnotes: {}
       };
       this.forceRefresh = !this.forceRefresh; // HACK
       this.$emit("forceSave");
@@ -102,8 +102,8 @@ export default {
     },
     forceSave() {
       this.$emit("forceSave");
-    },
-  },
+    }
+  }
 };
 </script>
 
