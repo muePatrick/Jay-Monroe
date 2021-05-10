@@ -54,7 +54,7 @@ export default {
   watch: {},
   created() {
     database.connect();
-    database.read().then((t) => {
+    database.read().then(t => {
       console.log(t);
     });
     return true;
@@ -69,7 +69,7 @@ export default {
       // this.$emit("forceSave");
       // this.forceRefresh = !this.forceRefresh; //HACK
       database.addTest();
-      database.read().then((t) => {
+      database.read().then(t => {
         console.log(t);
       });
     },

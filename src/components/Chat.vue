@@ -17,8 +17,7 @@
       v-model="enteredMsg"
       placeholder="Enter Message (ctrl + enter to send)"
       ref="messageInput"
-      v-on:keydown.ctrl.enter.prevent
-      v-on:keyup.ctrl.enter="sendMsg"
+      v-on:keydown.ctrl.enter.prevent="sendMsg"
     ></textarea>
     <button class="button chat-button" v-on:click="sendMsg">Send</button>
   </div>
@@ -56,6 +55,7 @@ export default {
       );
     },
     sendMsg() {
+      this.enteredMsg = this.enteredMsg.trim();
       if (this.enteredMsg === "") {
         alert("Not sending empty message");
       } else {
