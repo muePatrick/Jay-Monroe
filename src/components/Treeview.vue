@@ -23,12 +23,13 @@
       <tvul
         class="scrollable"
         :key="forceRefresh"
-        :notes="notes"
         :selectedNote="selectedNote"
-        @selectNote="selectNote($event)"
+        :notes="rootNotes"
+        @selectNote="selectNote"
         @removeNote="removeNote"
         @forceSave="forceSave"
       />
+      <button class="button" @click="testDB">TestDB</button>
     </aside>
   </div>
 </template>
@@ -44,18 +45,18 @@ export default {
     tvul: TreeviewUl,
     chat: Chat
   },
-  props: ["user", "notes", "selectedNote"],
+  props: ["user", "selectedNote"],
   data() {
     return {
+      rootNotes: [],
       forceRefresh: false
     };
   },
   computed: {},
   watch: {},
   created() {
-    database.connect();
-    database.read().then((t) => {
-      console.log(t);
+    database.getNotesByParent(null).then(r => {
+      this.rootNotes = r.docs;
     });
     return true;
   },
@@ -68,10 +69,10 @@ export default {
       // };
       // this.$emit("forceSave");
       // this.forceRefresh = !this.forceRefresh; //HACK
-      database.addTest();
-      database.read().then((t) => {
-        console.log(t);
-      });
+    },
+    async testDB() {
+      database.getRootIds()
+      console.log("Button pressed. It does nothing!");
     },
     selectNote(uuid) {
       this.$emit("selectNote", uuid);

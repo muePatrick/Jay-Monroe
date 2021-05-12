@@ -4,7 +4,6 @@
       <div class="column is-2">
         <tv
           :user="user"
-          :notes="notes"
           :selectedNote="selectedNote"
           class="eighty-scrollable"
           @selectNote="selectNote"
@@ -36,8 +35,9 @@
 import { Editor } from "@toast-ui/vue-editor";
 import Treeview from "@/components/Treeview";
 
-import fakeData from "@/data/fakeData";
 import fakeUser from "@/data/fakeUser";
+
+import database from "@/data/pouchdb";
 
 export default {
   components: {
@@ -46,49 +46,51 @@ export default {
   },
   data() {
     return {
-      notes: fakeData,
       user: fakeUser,
       selectedNote: "",
       currentNote: { title: "" },
       editorOptions: {
         usageStatistics: false
-      }
+      },
+      noChangeTimeout: undefined
     };
   },
   computed: {},
   watch: {
-    notes: {
+    currentNote: {
       deep: true,
       handler() {
-        localStorage.setItem("savedNotes", JSON.stringify(this.notes));
+        // clearTimeout(this.noChangeTimeout);
+        // this.noChangeTimeout = setTimeout((_) => {
+        //   database.setNote(this.currentNote);
+        // }, 1000);
+        console.log(this.noChangeTimeout);
       }
     }
   },
   created() {
-    if (localStorage.getItem("savedNotes")) {
-      this.notes = JSON.parse(localStorage.getItem("savedNotes"));
-    }
+    database.connect();
     return true;
   },
   methods: {
     selectNote(uuid) {
-      if (uuid == undefined) {
-        this.selectedNote = "";
-        this.currentNote = { title: "" };
-        this.$refs.toastuiEditor.invoke("setMarkdown", "", "false");
-        return true;
-      }
-      let note;
-      uuid.forEach(currentUuid => {
-        if (!note) {
-          note = this.notes[currentUuid];
-        } else {
-          note = note["subnotes"][currentUuid];
+      database.setNote(this.currentNote).then(() => {
+        if (uuid == undefined) {
+          this.selectedNote = "";
+          this.currentNote = { title: "" };
+          this.$refs.toastuiEditor.invoke("setMarkdown", "", "false");
+          return true;
         }
+        database.getNoteById(uuid).then(note => {
+          this.currentNote = note;
+          this.selectedNote = uuid;
+          this.$refs.toastuiEditor.invoke(
+            "setMarkdown",
+            this.currentNote.content,
+            "false"
+          );
+        });
       });
-      this.$refs.toastuiEditor.invoke("setMarkdown", note.content, "false");
-      this.selectedNote = uuid.pop();
-      this.currentNote = note;
       return true;
     },
     onEditorChange() {
@@ -96,7 +98,7 @@ export default {
     },
     forceSave() {
       console.log("notes fs");
-      localStorage.setItem("savedNotes", JSON.stringify(this.notes));
+      // localStorage.setItem("savedNotes", JSON.stringify(this.notes));
     }
   }
 };
