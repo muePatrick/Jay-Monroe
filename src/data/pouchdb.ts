@@ -6,14 +6,20 @@ import PouchFind from 'pouchdb-find'
 PouchDB.plugin(PouchFind)
 
 export default new (class {
+  // Disable linter for #localDB since it does not recognize the private var parameter
+  // eslint-disable-next-line
   #localDB: any;
 
   constructor() {
     this.#localDB = undefined
   }
 
+  // TODO move this to constructor
   connect() {
     this.#localDB = new PouchDB('notes_local');
+
+    this.#localDB.compact()
+
     this.#localDB.createIndex({
       index: {fields: ['parent']}
     }).then(function (result: any) {
@@ -32,53 +38,74 @@ export default new (class {
     });
   }
 
-  getNotesByParent(root:any = null) {
-    return this.#localDB.find({
-      selector: {
-        parent: root
-      }
-    })
-  }
+  // getNotesByParent(root:any = null) {
+  //   return this.#localDB.find({
+  //     selector: {
+  //       parent: root
+  //     }
+  //   })
+  // }
 
   getRootIds() {
-    this.#localDB.allDocs({
-      "include_docs": false,
-      "attachments": false
-    }).then(function (result: any) {
-      console.log(result.rows.map((i: any) => i.id))
-    }).catch(function (err: any) {
-      console.log(err);
-    });
+    return this.#localDB.find({
+      fields: ['_id'],
+      selector: {
+        parent: null
+      }
+    })
   }
 
   getNoteById(id: any) {
     return this.#localDB.get(id)
   }
 
-  getNoteArrayByIds(noteIds: any) {
-    return this.#localDB.allDocs({
-      "include_docs": true,
-      "attachments": false,
-      "keys": [...noteIds]
-    })
-  }
-
   setNote(note: any) {
-    console.log({...note})
     // FIXME remove force, add working revision system
     return this.#localDB.put({...note}, {force: true}).then((response: any) => {
       console.log(response)
     }).catch(function (err: any) {
       console.log(err);
     });
+  }
 
+  addNoteUnder(noteId: any) {
+    // TODO allow noteId = null to add to root level
+    return this.#localDB.post({
+      title: 'New Note',
+      content: '',
+      parent: noteId,
+      subnotes: []
+    })
+  }
 
+  addRootNote() {
+    return this.#localDB.post({
+      title: 'New Root Note',
+      content: '',
+      parent: null,
+      subnotes: []
+    })
+  }
+
+  removeNotesAndSubnotes(note: any) {
+    this.#localDB.remove(note).then((r: any) => {
+      console.log(r)
+    })
+
+    return this.#localDB.get(note.parent).then((p: any) => {
+      console.log(p.subnotes)
+      const x = p.subnotes
+      x.splice(p.subnotes.indexOf(note._id), 1)
+      p.subnotes = x
+      console.log(p.subnotes)
+      this.#localDB.put({...p}, {force: true})
+    })
   }
 
   async addTest() {
     this.#localDB.put({
       _id: "1111",
-      title: "1111",
+      title: "Connection 1",
       content: "# 1111",
       subnotes: ["aaaa", "bbbb"],
       parent: null
@@ -86,7 +113,7 @@ export default new (class {
 
     this.#localDB.put({
       _id: "2222",
-      title: "2222",
+      title: "Connection 2",
       content: "# 2222",
       subnotes: [],
       parent: null

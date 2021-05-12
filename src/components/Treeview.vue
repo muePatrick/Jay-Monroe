@@ -18,17 +18,22 @@
       <chat />
       <p class="menu-label">
         Notes
-        <font-awesome-icon :icon="['fas', 'plus-square']" @click="addNote" />
+        <font-awesome-icon
+          :icon="['fas', 'plus-square']"
+          @click="addRootNote"
+          style="cursor: pointer;"
+        />
       </p>
-      <tvul
-        class="scrollable"
-        :key="forceRefresh"
-        :selectedNote="selectedNote"
-        :notes="rootNotes"
-        @selectNote="selectNote"
-        @removeNote="removeNote"
-        @forceSave="forceSave"
-      />
+      <ul class="notesList" :key="forceRefresh">
+        <tvul
+          v-for="rootNote in rootNotes"
+          :key="rootNote"
+          :selectedNote="selectedNote"
+          :noteId="rootNote"
+          @selectNote="selectNote"
+          @doForceRefresh="doForceRefresh"
+        />
+      </ul>
       <button class="button" @click="testDB">TestDB</button>
     </aside>
   </div>
@@ -55,28 +60,24 @@ export default {
   computed: {},
   watch: {},
   created() {
-    database.getNotesByParent(null).then(r => {
-      this.rootNotes = r.docs;
+    database.getRootIds().then(r => {
+      this.rootNotes = r.docs.map(v => v._id);
     });
     return true;
   },
   methods: {
-    addNote() {
-      // this.notes[Date.now()] = {
-      //   title: "New Note",
-      //   content: "",
-      //   subnotes: {}
-      // };
-      // this.$emit("forceSave");
-      // this.forceRefresh = !this.forceRefresh; //HACK
+    addRootNote() {
+      database.addRootNote().then(() => {
+        this.forceRefresh = !this.forceRefresh; //HACK
+        this.$emit("doForceRefresh");
+      });
     },
     async testDB() {
-      database.getRootIds()
+      database.addTest();
       console.log("Button pressed. It does nothing!");
     },
     selectNote(uuid) {
       this.$emit("selectNote", uuid);
-      return true;
     },
     removeNote(uuid) {
       delete this.notes[uuid];
@@ -86,6 +87,10 @@ export default {
     },
     forceSave() {
       this.$emit("forceSave");
+    },
+    doForceRefresh() {
+      this.forceRefresh = !this.forceRefresh;
+      this.$emit("doForceRefresh");
     }
   }
 };

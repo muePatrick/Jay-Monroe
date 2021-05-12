@@ -3,11 +3,11 @@
     <div class="columns">
       <div class="column is-2">
         <tv
+          :key="forceRefresh"
           :user="user"
           :selectedNote="selectedNote"
           class="eighty-scrollable"
           @selectNote="selectNote"
-          @forceSave="forceSave"
         />
       </div>
       <div class="column" :class="{ lock: !selectedNote }">
@@ -52,7 +52,8 @@ export default {
       editorOptions: {
         usageStatistics: false
       },
-      noChangeTimeout: undefined
+      noChangeTimeout: undefined,
+      forceRefresh: false
     };
   },
   computed: {},
@@ -60,11 +61,18 @@ export default {
     currentNote: {
       deep: true,
       handler() {
-        // clearTimeout(this.noChangeTimeout);
-        // this.noChangeTimeout = setTimeout((_) => {
-        //   database.setNote(this.currentNote);
-        // }, 1000);
-        console.log(this.noChangeTimeout);
+        // TODO move this to input field change and select new note and somehow stop the complete redraw
+        if (this.noChangeTimeout) {
+          clearTimeout(this.noChangeTimeout);
+        }
+        this.noChangeTimeout = setTimeout(() => {
+          // BUG if no note is opened this results in a pouchDB Error because it is not a valid not (no id)
+          database.setNote(this.currentNote).then(() => {
+            console.log("Autosaved");
+            // TODO get li by ref=noteId and only refresh that item to save resources
+            this.forceRefresh = !this.forceRefresh; // HACK
+          });
+        }, 1000);
       }
     }
   },
@@ -95,6 +103,16 @@ export default {
     },
     onEditorChange() {
       this.currentNote.content = this.$refs.toastuiEditor.invoke("getMarkdown");
+      if (this.noChangeTimeout) {
+        clearTimeout(this.noChangeTimeout);
+      }
+      this.noChangeTimeout = setTimeout(() => {
+        database.setNote(this.currentNote).then(() => {
+          console.log("Autosaved");
+          // TODO get li by ref=noteId and only refresh that item to save resources
+          this.forceRefresh = !this.forceRefresh; // HACK
+        });
+      }, 1000);
     },
     forceSave() {
       console.log("notes fs");

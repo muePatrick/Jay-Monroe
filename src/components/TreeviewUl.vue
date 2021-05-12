@@ -1,53 +1,55 @@
 <template>
-  <div class="viewRoot">
-    <ul class="notesList" :key="forceRefresh">
-      <li v-for="note in notes" :key="note._id">
-        <div class="dropdown is-hoverable color-rotate">
-          <div class="dropdown-trigger">
-            <font-awesome-icon
-              class="menudot"
-              :icon="['fas', 'ellipsis-h']"
-              style="cursor: pointer"
-            />
-          </div>
-          <div class="dropdown-menu" id="dropdown-menu3" role="menu">
-            <div class="dropdown-content">
-              <a href="#" class="dropdown-item" @click="addSubnote(note)">
-                Add Subnote
-              </a>
-              <a href="#" class="dropdown-item" @click="removeNote(note._id)">
-                Remove
-              </a>
-              <hr class="dropdown-divider" />
-              <a href="#" class="dropdown-item"> More... </a>
-            </div>
-          </div>
-        </div>
-
-        <a
-          :class="{ 'is-active': note._id == selectedNote }"
-          v-on:click="selectNote(note._id)"
-          >{{ note.title }}</a
-        >
+  <!-- <div class="viewRoot"> -->
+  <!-- <ul class="notesList" :key="forceRefresh"> -->
+  <li :key="forceRefresh">
+    <div class="dropdown is-hoverable color-rotate">
+      <div class="dropdown-trigger">
         <font-awesome-icon
-          v-if="note.subnotes"
-          class="smaller-icon"
-          :icon="['fas', note.collapsed ? 'plus-square' : 'minus-square']"
-          @click="toggleNoteCollapse(note._id)"
+          class="menudot"
+          :icon="['fas', 'ellipsis-h']"
           style="cursor: pointer"
         />
+      </div>
+      <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+        <div class="dropdown-content">
+          <a href="#" class="dropdown-item" @click="addSubnote()">
+            Add Subnote
+          </a>
+          <a href="#" class="dropdown-item" @click="removeNote()">
+            Remove
+          </a>
+          <hr class="dropdown-divider" />
+          <a href="#" class="dropdown-item"> More... </a>
+        </div>
+      </div>
+    </div>
 
-        <tvul
-          v-if="!note.collapsed"
-          :notes="subnotes"
-          :selectedNote="selectedNote"
-          @selectNote="selectNote"
-          @removeNote="removeNote2(note.subnotes, $event)"
-          @forceSave="forceSave"
-        />
-      </li>
+    <a
+      :class="{ 'is-active': note._id == selectedNote }"
+      v-on:click="selectNote(note._id)"
+      >{{ note.title }}</a
+    >
+    <font-awesome-icon
+      v-if="note.subnotes"
+      class="smaller-icon"
+      :icon="['fas', note.collapsed ? 'plus-square' : 'minus-square']"
+      @click="toggleNoteCollapse()"
+      style="cursor: pointer"
+    />
+
+    <ul class="notesList" v-if="!note.collapsed">
+      <tvul
+        v-for="note in note.subnotes"
+        :key="note"
+        :selectedNote="selectedNote"
+        :noteId="note"
+        @selectNote="selectNote"
+        @doForceRefresh="doForceRefresh"
+      />
     </ul>
-  </div>
+  </li>
+  <!-- </ul>
+  </div> -->
 </template>
 
 <style scoped>
@@ -61,18 +63,18 @@ export default {
   components: {
     tvul: () => import("@/components/TreeviewUl") // Recursions can not be loaded normally
   },
-  props: ["notes", "selectedNote"],
+  props: ["noteId", "selectedNote"],
   data() {
     return {
-      subnotes: [],
+      note: {},
       forceRefresh: false
     };
   },
   computed: {},
   watch: {},
   created() {
-    database.getNoteArrayByIds(this.notes).then(s => {
-      this.subnotes = s.rows.map(c => c.doc);
+    database.getNoteById(this.noteId).then(note => {
+      this.note = note;
     });
     return true;
   },
@@ -81,33 +83,37 @@ export default {
       this.$emit("selectNote", uuid);
       return true;
     },
-    toggleNoteCollapse(uuid) {
-      // this.notes[uuid]["collapsed"] =
-      //   this.notes[uuid]["collapsed"] == true ? false : true;
+    toggleNoteCollapse() {
+      this.note["collapsed"] = this.note["collapsed"] == true ? false : true;
+      database.setNote(this.note);
       this.forceRefresh = !this.forceRefresh; // HACK
     },
-    addSubnote(note) {
-      // if (note.subnotes == undefined) {
-      //   note.subnotes = {};
-      // }
-      // note.subnotes[Date.now()] = {
-      //   title: "New Note",
-      //   content: "",
-      //   subnotes: {}
-      // };
-      this.forceRefresh = !this.forceRefresh; // HACK
-      this.$emit("forceSave");
+    addSubnote() {
+      // BUG adding two notes quickly and removing one instantly, removes the second one too
+      // both got "newId"s but when removing one the other did not appear in the subnote array
+      database.addNoteUnder(this.note._id).then(newId => {
+        this.note.subnotes.push(newId.id);
+        database.setNote(this.note).then(() => {
+          this.forceRefresh = !this.forceRefresh; // HACK
+        });
+      });
     },
-    removeNote(uuid) {
-      this.$emit("removeNote", uuid);
+    removeNote() {
+      database
+        .removeNotesAndSubnotes(this.note)
+        .then(() => {
+          this.$emit("doForceRefresh");
+          // BUG Ghost Note is still visible in editor
+        })
+        .catch(err => {
+          console.debug(
+            `Error while deleting note parent. This is because the note is a root note: ${err}`
+          );
+        });
     },
-    removeNote2(notes, uuid) {
-      // delete notes[uuid];
-      this.$emit("forceSave");
-      this.forceRefresh = !this.forceRefresh; // HACK
-    },
-    forceSave() {
-      this.$emit("forceSave");
+    doForceRefresh() {
+      this.forceRefresh = !this.forceRefresh;
+      this.$emit("doForceRefresh");
     }
   }
 };
