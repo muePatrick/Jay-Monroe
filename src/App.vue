@@ -19,9 +19,9 @@
             </span>
             Users
           </router-link>
-          <router-link to="/" class="navbar-item">
+          <router-link to="/chat" class="navbar-item">
             <span class="icon is-medium has-text-light">
-              <font-awesome-icon :icon="['fas', 'exclamation-triangle']" />
+              <font-awesome-icon :icon="['fas', 'comments']" />
             </span>
             Chat
           </router-link>

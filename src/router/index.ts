@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 
 import Notes from "../views/Notes.vue";
+import Chatview from "../views/Chatview.vue";
 
 Vue.use(VueRouter);
 
@@ -11,6 +12,12 @@ const routes: Array<RouteConfig> = [
     name: "Notes",
     props: true,
     component: Notes
+  },
+  {
+    path: "/chat",
+    name: "Chat",
+    props: false,
+    component: Chatview
   }
 ];
 

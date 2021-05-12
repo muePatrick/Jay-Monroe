@@ -45,7 +45,7 @@ export default new (class {
       "include_docs": false,
       "attachments": false
     }).then(function (result: any) {
-      console.log(result.rows.map(i => i.id))
+      console.log(result.rows.map((i: any) => i.id))
     }).catch(function (err: any) {
       console.log(err);
     });
