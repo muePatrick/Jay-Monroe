@@ -20,10 +20,6 @@ export default {
 };
 </script>
 
-<style scoped>
-@import "../css/bulma.css";
-</style>
-
 <style lang="css" scoped>
 div {
   margin: 0;

@@ -97,10 +97,6 @@ export default {
 </script>
 
 <style scoped>
-@import "../css/bulma.css";
-</style>
-
-<style scoped>
 .viewRoot {
   margin: 0;
   border: 0;

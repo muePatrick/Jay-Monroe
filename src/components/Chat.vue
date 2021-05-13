@@ -23,10 +23,6 @@
   </div>
 </template>
 
-<style scoped>
-@import "../css/bulma.css";
-</style>
-
 <script>
 import fakeMessages from "@/data/fakeMessages";
 

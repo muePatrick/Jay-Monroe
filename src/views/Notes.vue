@@ -123,7 +123,6 @@ export default {
 </script>
 
 <style scoped>
-@import "../css/bulma.css";
 @import "../../node_modules/codemirror/lib/codemirror.css";
 @import "../../node_modules/@toast-ui/editor/dist/toastui-editor.css";
 </style>

@@ -18,7 +18,13 @@ const routes: Array<RouteConfig> = [
     name: "Chat",
     props: false,
     component: Chatview
-  }
+  },
+  {
+    path: "/settings",
+    name: "Settings",
+    component: () =>
+      import(/* webpackChunkName: "settings" */ "../views/Settings.vue")
+  },
 ];
 
 const router = new VueRouter({

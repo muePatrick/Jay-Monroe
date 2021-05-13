@@ -52,10 +52,6 @@
   </div> -->
 </template>
 
-<style scoped>
-@import "../css/bulma.css";
-</style>
-
 <script>
 import database from "@/data/pouchdb";
 
