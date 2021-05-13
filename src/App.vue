@@ -35,8 +35,8 @@
   </div>
 </template>
 
-<style>
-@import "./css/bulma.css";
+<style lang="scss">
+@import "./sass/bulma.scss";
 </style>
 
 <style scoped>
