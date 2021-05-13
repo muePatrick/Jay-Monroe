@@ -1,2 +1,11 @@
 @charset "utf-8";
+
+$faded-green: #35808c;
+
+$primary: $faded-green;
+
+$pageloader-opacity: 1;
+
 @import "../../node_modules/bulma/bulma.sass";
+@import "../../node_modules/bulma-pageloader/dist/css/bulma-pageloader.sass";
+@import "../../node_modules/bulma-switch/dist/css/bulma-switch.sass";

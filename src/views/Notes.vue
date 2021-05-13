@@ -1,5 +1,9 @@
 <template>
   <div class="viewRoot">
+    <div class="pageloader" :class="{ 'is-active': !loadingDone }">
+      <span class="title">Connecting To Database</span>
+    </div>
+
     <div class="columns">
       <div class="column is-2">
         <tv
@@ -53,7 +57,8 @@ export default {
         usageStatistics: false
       },
       noChangeTimeout: undefined,
-      forceRefresh: false
+      forceRefresh: false,
+      loadingDone: false
     };
   },
   computed: {},
@@ -77,7 +82,11 @@ export default {
     }
   },
   created() {
-    database.connect();
+    database.connect().then(() => {
+      setTimeout(() => {
+        this.loadingDone = true;
+      }, 750);
+    });
     return true;
   },
   methods: {

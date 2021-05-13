@@ -13,7 +13,8 @@ import {
   faPlusSquare,
   faStickyNote,
   faUser,
-  faComments
+  faComments,
+  faCogs
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -26,7 +27,8 @@ library.add(
   faCircle,
   faEllipsisV,
   faEllipsisH,
-  faComments
+  faComments,
+  faCogs
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);

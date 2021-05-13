@@ -98,10 +98,11 @@ export default {
       database
         .removeNotesAndSubnotes(this.note)
         .then(() => {
-          this.$emit("doForceRefresh");
+          this.$emit("doForceRefresh"); // HACK
           // BUG Ghost Note is still visible in editor
         })
         .catch(err => {
+          this.$emit("reloadRootNotes");
           console.debug(
             `Error while deleting note parent. This is because the note is a root note: ${err}`
           );

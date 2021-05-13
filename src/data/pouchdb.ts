@@ -18,9 +18,9 @@ export default new (class {
   connect() {
     this.#localDB = new PouchDB('notes_local');
 
-    this.#localDB.compact()
+    const doCompact = this.#localDB.compact()
 
-    this.#localDB.createIndex({
+    const doCreateIndex = this.#localDB.createIndex({
       index: {fields: ['parent']}
     }).then(function (result: any) {
       console.log(`Database index ${result.result}`)
@@ -36,6 +36,8 @@ export default new (class {
     }).catch(function (err: any) {
       console.log(err);
     });
+
+    return Promise.all([doCompact, doCreateIndex])
   }
 
   // getNotesByParent(root:any = null) {
@@ -102,11 +104,29 @@ export default new (class {
     })
   }
 
+  async reinitDatabase(destroy: boolean) {
+    this.connect().then(() => {
+      if (destroy) {
+        this.#localDB.destroy().then(() => {
+          this.connect()
+        })
+      } else {
+        this.#localDB.getIndexes().then((indexes: any) => {
+            if (indexes.indexes[0].ddoc) {
+              this.#localDB.deleteIndex(indexes.indexes[0]).then(() => {
+                this.connect()
+              })
+            }
+        })
+      }
+    })
+  }
+
   async addTest() {
     this.#localDB.put({
       _id: "1111",
       title: "Connection 1",
-      content: "# 1111",
+      content: "",
       subnotes: ["aaaa", "bbbb"],
       parent: null
     }, () => {return true});
@@ -114,23 +134,23 @@ export default new (class {
     this.#localDB.put({
       _id: "2222",
       title: "Connection 2",
-      content: "# 2222",
+      content: "",
       subnotes: [],
       parent: null
     }, () => {return true});
 
     this.#localDB.put({
       _id: "aaaa",
-      title: "aaaa",
-      content: "# aaaa",
+      title: "Subnote A",
+      content: "",
       subnotes: [],
       parent: "1111"
     }, () => {return true});
 
     this.#localDB.put({
       _id: "bbbb",
-      title: "bbbb",
-      content: "# bbbb",
+      title: "Subnote A",
+      content: "",
       subnotes: [],
       parent: "1111"
     }, () => {return true});

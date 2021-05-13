@@ -5,14 +5,15 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    draggedNote: undefined,
-    draggedUuid: ""
+    settingsShowUser: true,
+    settingsShowChat: true
   },
   mutations: {
-    dragNote(state, note) {
-      state.draggedNote = note.note;
-      state.draggedUuid = note.uuid;
-      console.log(note);
+    settingsShowUser(state, data) {
+      state.settingsShowUser = data;
+    },
+    settingsShowChat(state, data) {
+      state.settingsShowChat = data;
     }
   },
   actions: {},

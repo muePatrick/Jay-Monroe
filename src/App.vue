@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <nav
-      class="navbar is-dark notion-navbar"
+      class="navbar is-primary notion-navbar"
       role="navigation"
       aria-label="main navigation"
     >
@@ -21,7 +21,7 @@
           </router-link>
           <router-link to="/settings" class="navbar-item">
             <span class="icon is-medium has-text-light">
-              <font-awesome-icon :icon="['fas', 'exclamation-triangle']" />
+              <font-awesome-icon :icon="['fas', 'cogs']" />
             </span>
             Settings
           </router-link>
@@ -42,6 +42,6 @@
 <style scoped>
 .notion-navbar {
   /* background-color: #454b4e; */
-  background-color: #35808c;
+  /* background-color: #35808c; */
 }
 </style>

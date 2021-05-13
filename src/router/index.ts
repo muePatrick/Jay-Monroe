@@ -24,7 +24,7 @@ const routes: Array<RouteConfig> = [
     name: "Settings",
     component: () =>
       import(/* webpackChunkName: "settings" */ "../views/Settings.vue")
-  },
+  }
 ];
 
 const router = new VueRouter({

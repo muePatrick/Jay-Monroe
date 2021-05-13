@@ -1,8 +1,8 @@
 <template>
   <div class="viewRoot">
     <aside class="menu eighty-scrollable">
-      <p class="menu-label">Users</p>
-      <ul class="menu-list">
+      <p class="menu-label" v-if="settingsShowUser">Users</p>
+      <ul class="menu-list" v-if="settingsShowUser">
         <li v-for="(user, userId) in user" :key="userId">
           <a
             ><span
@@ -14,8 +14,8 @@
           >
         </li>
       </ul>
-      <p class="menu-label">Chat</p>
-      <chat />
+      <p class="menu-label" v-if="settingsShowChat">Chat</p>
+      <chat v-if="settingsShowChat" />
       <p class="menu-label">
         Notes
         <font-awesome-icon
@@ -32,9 +32,9 @@
           :noteId="rootNote"
           @selectNote="selectNote"
           @doForceRefresh="doForceRefresh"
+          @reloadRootNotes="reloadRootNotes"
         />
       </ul>
-      <button class="button" @click="testDB">TestDB</button>
     </aside>
   </div>
 </template>
@@ -44,6 +44,7 @@ import TreeviewUl from "@/components/TreeviewUl";
 import Chat from "@/components/Chat";
 
 import database from "@/data/pouchdb";
+import store from "@/store/index.ts";
 
 export default {
   components: {
@@ -57,7 +58,14 @@ export default {
       forceRefresh: false
     };
   },
-  computed: {},
+  computed: {
+    settingsShowUser() {
+      return store.state.settingsShowUser;
+    },
+    settingsShowChat() {
+      return store.state.settingsShowChat;
+    }
+  },
   watch: {},
   created() {
     database.getRootIds().then(r => {
@@ -67,30 +75,34 @@ export default {
   },
   methods: {
     addRootNote() {
-      database.addRootNote().then(() => {
+      database.addRootNote().then(newId => {
+        this.rootNotes.push(newId.id);
         this.forceRefresh = !this.forceRefresh; //HACK
         this.$emit("doForceRefresh");
       });
     },
-    async testDB() {
-      database.addTest();
-      console.log("Button pressed. It does nothing!");
-    },
     selectNote(uuid) {
       this.$emit("selectNote", uuid);
     },
-    removeNote(uuid) {
-      delete this.notes[uuid];
-      this.forceRefresh = !this.forceRefresh; //HACK
-      this.$emit("selectNote", undefined);
-      this.$emit("forceSave");
-    },
-    forceSave() {
-      this.$emit("forceSave");
-    },
+    // removeNote(uuid) {
+    //   delete this.notes[uuid];
+    //   this.forceRefresh = !this.forceRefresh; //HACK
+    //   this.$emit("selectNote", undefined);
+    //   this.$emit("forceSave");
+    // },
+    // forceSave() {
+    //   this.$emit("forceSave");
+    // },
     doForceRefresh() {
       this.forceRefresh = !this.forceRefresh;
       this.$emit("doForceRefresh");
+    },
+    reloadRootNotes() {
+      database.getRootIds().then(r => {
+        this.rootNotes = r.docs.map(v => v._id);
+        this.forceRefresh = !this.forceRefresh;
+        this.$emit("doForceRefresh");
+      });
     }
   }
 };
@@ -101,6 +113,5 @@ export default {
   margin: 0;
   border: 0;
   padding: 0;
-  background-color: #ebeced;
 }
 </style>
