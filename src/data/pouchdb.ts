@@ -61,8 +61,25 @@ export default new (class {
     return this.#localDB.get(id)
   }
 
+  //XXX Used just for debugging
+  getNoteByIdAndRev(id: any, rev: any) {
+    let options:any = {"revs": true, "revs_info": true, "conflicts": true}
+    if (rev != undefined) {
+      options = {...options, "rev": rev}
+    }
+    this.#localDB.get(id, options).then((res: any) => {
+      console.log(res)
+    })
+  }
+  async getAllNotes() {
+    const all = await this.#localDB.allDocs({"include_docs": true, "conflicts": true})
+    console.log(all)
+    return all
+  }
+
   setNote(note: any) {
     // FIXME remove force, add working revision system
+    console.log(note)
     return this.#localDB.put({...note}, {force: true}).then((response: any) => {
       console.log(response)
     }).catch(function (err: any) {

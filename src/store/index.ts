@@ -4,9 +4,9 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 
 function initialValues() {
-  const a = localStorage.getItem("settingsShowUser")=="true"?true:false
-  const b = localStorage.getItem("settingsShowChat")=="true"?true:false
-  return {a, b}
+  const a = localStorage.getItem("settingsShowUser") == "true" ? true : false;
+  const b = localStorage.getItem("settingsShowChat") == "true" ? true : false;
+  return { a, b };
 }
 
 export default new Vuex.Store({

@@ -43,6 +43,30 @@
         </div>
       </div>
     </div>
+
+    <div class="box settingsBox">
+      <label class="label">Database Debugging</label>
+      <p>(Open Console To View Results)</p>
+      <br />
+      <div class="field">
+        <label class="label">Doc Id</label>
+        <input class="input" type="text" placeholder="_id" v-model="id" />
+        <label class="label">Doc Rev (optional)</label>
+        <input class="input" type="text" placeholder="_rev" v-model="rev" />
+      </div>
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-primary" @click="retrieveData">
+            Retrieve Id
+          </button>
+        </div>
+        <div class="control">
+          <button class="button is-primary">
+            Placeholder
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -54,7 +78,9 @@ export default {
   components: {},
   data() {
     return {
-      foo: "bar"
+      foo: "bar",
+      id: undefined,
+      rev: undefined
     };
   },
   computed: {
@@ -78,6 +104,9 @@ export default {
     },
     async reinitDatabase(destroy) {
       database.reinitDatabase(destroy);
+    },
+    retrieveData() {
+      database.getNoteByIdAndRev(this.id, this.rev);
     }
   }
 };

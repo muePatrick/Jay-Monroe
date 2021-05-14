@@ -32,7 +32,7 @@
     <font-awesome-icon
       v-if="note.subnotes"
       class="smaller-icon"
-      :icon="['fas', note.collapsed ? 'plus-square' : 'minus-square']"
+      :icon="['fas', note.collapsed ? 'caret-up' : 'caret-down']"
       @click="toggleNoteCollapse()"
       style="cursor: pointer"
     />

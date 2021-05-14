@@ -19,7 +19,7 @@
       <p class="menu-label">
         Notes
         <font-awesome-icon
-          :icon="['fas', 'plus-square']"
+          :icon="['fas', 'plus']"
           @click="addRootNote"
           style="cursor: pointer;"
         />
@@ -113,5 +113,19 @@ export default {
   margin: 0;
   border: 0;
   padding: 0;
+}
+
+.notesList a {
+  color: #9b9a97;
+  margin-right: 5px;
+  user-select: none;
+}
+
+.notesList {
+  color: #9b9a97;
+}
+
+.notesList a:hover {
+  color: rgba(155, 154, 151, 0.4);
 }
 </style>

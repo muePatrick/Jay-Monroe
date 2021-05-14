@@ -19,7 +19,9 @@
           class="input is-medium"
           type="text"
           placeholder="Title"
+          ref="noteTitleInput"
           v-model="currentNote.title"
+          @change="onNoteTitleChange"
         />
         <div class="editor">
           <editor
@@ -69,12 +71,14 @@ export default {
         // TODO move this to input field change and select new note and somehow stop the complete redraw
         if (this.noChangeTimeout) {
           clearTimeout(this.noChangeTimeout);
+          this.noChangeTimeout = undefined;
         }
         this.noChangeTimeout = setTimeout(() => {
           // BUG if no note is opened this results in a pouchDB Error because it is not a valid not (no id)
           database.setNote(this.currentNote).then(() => {
             console.log("Autosaved");
             // TODO get li by ref=noteId and only refresh that item to save resources
+            this.noChangeTimeout = undefined;
             this.forceRefresh = !this.forceRefresh; // HACK
           });
         }, 1000);
@@ -91,6 +95,10 @@ export default {
   },
   methods: {
     selectNote(uuid) {
+      if (this.noChangeTimeout) {
+        clearTimeout(this.noChangeTimeout);
+        this.noChangeTimeout = undefined;
+      }
       database.setNote(this.currentNote).then(() => {
         if (uuid == undefined) {
           this.selectedNote = "";
@@ -114,18 +122,19 @@ export default {
       this.currentNote.content = this.$refs.toastuiEditor.invoke("getMarkdown");
       if (this.noChangeTimeout) {
         clearTimeout(this.noChangeTimeout);
+        this.noChangeTimeout = undefined;
       }
       this.noChangeTimeout = setTimeout(() => {
         database.setNote(this.currentNote).then(() => {
           console.log("Autosaved");
           // TODO get li by ref=noteId and only refresh that item to save resources
+          this.noChangeTimeout = undefined;
           this.forceRefresh = !this.forceRefresh; // HACK
         });
       }, 1000);
     },
-    forceSave() {
-      console.log("notes fs");
-      // localStorage.setItem("savedNotes", JSON.stringify(this.notes));
+    onNoteTitleChange() {
+      console.log(this.$refs.noteTitleInput);
     }
   }
 };

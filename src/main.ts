@@ -9,26 +9,28 @@ import {
   faEllipsisH,
   faEllipsisV,
   faExclamationTriangle,
-  faMinusSquare,
-  faPlusSquare,
   faStickyNote,
   faUser,
   faComments,
-  faCogs
+  faCogs,
+  faCaretDown,
+  faCaretUp,
+  faPlus
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 library.add(
   faStickyNote,
   faUser,
-  faPlusSquare,
-  faMinusSquare,
+  faPlus,
   faExclamationTriangle,
   faCircle,
   faEllipsisV,
   faEllipsisH,
   faComments,
-  faCogs
+  faCogs,
+  faCaretDown,
+  faCaretUp
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
@@ -40,3 +42,19 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount("#app");
+
+
+import { toast } from 'bulma-toast'
+window.alert = (content: string, options = {}) => {
+  const defaultOptions: any = {
+    message: content,
+    type: 'is-success',
+    dismissible: false,
+    pauseOnHover: true,
+    "duration": 2500,
+    "position": "top-right",
+    "closeOnClick": true
+  }
+  options = {...defaultOptions, ...options}
+  toast(options)
+}
