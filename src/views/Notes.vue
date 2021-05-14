@@ -85,7 +85,7 @@ export default {
     database.connect().then(() => {
       setTimeout(() => {
         this.loadingDone = true;
-      }, 750);
+      }, 10);
     });
     return true;
   },

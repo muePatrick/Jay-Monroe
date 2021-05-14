@@ -38,10 +38,3 @@
 <style lang="scss">
 @import "./sass/bulma.scss";
 </style>
-
-<style scoped>
-.notion-navbar {
-  /* background-color: #454b4e; */
-  /* background-color: #35808c; */
-}
-</style>
