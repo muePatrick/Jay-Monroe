@@ -99,13 +99,7 @@ export default {
         clearTimeout(this.noChangeTimeout);
         this.noChangeTimeout = undefined;
       }
-      database.setNote(this.currentNote).then(() => {
-        if (uuid == undefined) {
-          this.selectedNote = "";
-          this.currentNote = { title: "" };
-          this.$refs.toastuiEditor.invoke("setMarkdown", "", "false");
-          return true;
-        }
+      if (this.selectedNote == "") {
         database.getNoteById(uuid).then(note => {
           this.currentNote = note;
           this.selectedNote = uuid;
@@ -115,7 +109,25 @@ export default {
             "false"
           );
         });
-      });
+      } else {
+        database.setNote(this.currentNote).then(() => {
+          if (uuid == undefined) {
+            this.selectedNote = "";
+            this.currentNote = { title: "" };
+            this.$refs.toastuiEditor.invoke("setMarkdown", "", "false");
+            return true;
+          }
+          database.getNoteById(uuid).then(note => {
+            this.currentNote = note;
+            this.selectedNote = uuid;
+            this.$refs.toastuiEditor.invoke(
+              "setMarkdown",
+              this.currentNote.content,
+              "false"
+            );
+          });
+        });
+      }
       return true;
     },
     onEditorChange() {

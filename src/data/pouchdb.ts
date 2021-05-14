@@ -78,13 +78,18 @@ export default new (class {
   }
 
   setNote(note: any) {
-    // FIXME remove force, add working revision system
-    console.log(note)
-    return this.#localDB.put({...note}, {force: true}).then((response: any) => {
-      console.log(response)
-    }).catch(function (err: any) {
-      console.log(err);
-    });
+    delete note._rev
+
+    return this.#localDB.get(note._id)
+    .then((doc: any) => {
+      this.#localDB.put({
+        ...doc, ...note
+      }).then((response: any) => {
+        console.log(response)
+      }).catch(function (err: any) {
+        console.log(err);
+      });
+    })
   }
 
   addNoteUnder(noteId: any) {
