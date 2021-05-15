@@ -1,7 +1,7 @@
 <template>
   <div class="viewRoot">
     <aside class="menu eighty-scrollable">
-      <p class="menu-label" v-if="settingsShowUser">Users</p>
+      <p class="menu-label is-unselectable" v-if="settingsShowUser">Users</p>
       <ul class="menu-list" v-if="settingsShowUser">
         <li v-for="(user, userId) in user" :key="userId">
           <a
@@ -14,9 +14,9 @@
           >
         </li>
       </ul>
-      <p class="menu-label" v-if="settingsShowChat">Chat</p>
+      <p class="menu-label is-unselectable" v-if="settingsShowChat">Chat</p>
       <chat v-if="settingsShowChat" />
-      <p class="menu-label">
+      <p class="menu-label is-unselectable">
         Notes
         <font-awesome-icon
           :icon="['fas', 'plus']"

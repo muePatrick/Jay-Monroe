@@ -1,8 +1,9 @@
 <template>
-  <!-- <div class="viewRoot"> -->
-  <!-- <ul class="notesList" :key="forceRefresh"> -->
   <li :key="forceRefresh">
-    <div class="dropdown is-hoverable color-rotate">
+    <div
+      class="dropdown is-hoverable color-rotate"
+      :class="{ 'is-active': menuOpen }"
+    >
       <div class="dropdown-trigger">
         <font-awesome-icon
           class="menudot"
@@ -27,10 +28,19 @@
     <a
       :class="{ 'is-active': note._id == selectedNote }"
       v-on:click="selectNote(note._id)"
+      draggable="true"
+      @dragstart="doDragStart"
+      @dragend="doDragEnd"
+      @dragenter="doDragEnter"
+      ondragover="event.preventDefault()"
+      @dragleave="doDragLeave"
+      @drop="doDrop"
+      @contextmenu="openMenu"
+      @blur="closeMenu"
       >{{ note.title }}</a
     >
     <font-awesome-icon
-      v-if="note.subnotes"
+      v-if="hasSubnotes"
       class="smaller-icon"
       :icon="['fas', note.collapsed ? 'caret-up' : 'caret-down']"
       @click="toggleNoteCollapse()"
@@ -48,8 +58,6 @@
       />
     </ul>
   </li>
-  <!-- </ul>
-  </div> -->
 </template>
 
 <script>
@@ -63,10 +71,15 @@ export default {
   data() {
     return {
       note: {},
+      menuOpen: false,
       forceRefresh: false
     };
   },
-  computed: {},
+  computed: {
+    hasSubnotes() {
+      return this.note.subnotes?.length > 0;
+    }
+  },
   watch: {},
   created() {
     database.getNoteById(this.noteId).then(note => {
@@ -111,6 +124,43 @@ export default {
     doForceRefresh() {
       this.forceRefresh = !this.forceRefresh;
       this.$emit("doForceRefresh");
+    },
+    doDragStart(event) {
+      event.dataTransfer.setData("application/json", JSON.stringify(this.note));
+      event.dataTransfer.effectAllowed = "move";
+      event.currentTarget.style.border = "dotted";
+    },
+    doDragEnd(event) {
+      event.dataTransfer.clearData();
+      event.dataTransfer.effectAllowed = "none";
+      event.currentTarget.style.border = "none";
+    },
+    doDragEnter(event) {
+      event.preventDefault();
+      event.srcElement.style.borderTop = "dashed";
+    },
+    doDragLeave(event) {
+      event.preventDefault();
+      event.srcElement.style.borderTop = "none";
+    },
+    doDrop(event) {
+      event.preventDefault();
+      event.srcElement.style.borderTop = "none";
+      const data = JSON.parse(event.dataTransfer.getData("application/json"));
+      database.moveNote(data._id, this.noteId).then(() => {
+        console.log("Note Moved");
+        this.forceRefresh = !this.forceRefresh;
+        this.$emit("doForceRefresh");
+      });
+    },
+    openMenu(event) {
+      event.preventDefault();
+      // BUG Adding new notes if menu is open via click and not hover, does not work
+      this.menuOpen = true;
+    },
+    closeMenu(event) {
+      event.preventDefault();
+      this.menuOpen = false;
     }
   }
 };

@@ -111,6 +111,52 @@ export default new (class {
     })
   }
 
+  async moveNote(srcId: any, targetId: any) {
+    // console.log(srcId)
+    // console.log(targetId)
+
+    const srcNote = await this.#localDB.get(srcId)
+    const oldParent = await this.#localDB.get(srcNote.parent)
+    const targetNote = await this.#localDB.get(targetId)
+    const newParent = await this.#localDB.get(targetNote.parent)
+
+    let localMovement = false
+    if (oldParent._id == newParent._id) {
+      localMovement = true
+    }
+
+    if (localMovement) {
+      newParent.subnotes.splice(newParent.subnotes.indexOf(srcId), 1)
+    } else {
+      // Remove Moved Note from Subnotes Array of old Parent Note
+      oldParent.subnotes.splice(oldParent.subnotes.indexOf(srcId), 1)
+    }
+
+    // Add Moved Note to Subnotes Array of new Parent Note
+    newParent.subnotes.splice(newParent.subnotes.indexOf(targetId), 0, srcId)
+
+    // Correct the parent element of the moved Note
+    srcNote.parent = newParent._id
+
+    // console.log(`srcId: ${srcId}, oldParentId: ${oldParent._id}, newParentId: ${newParent._id}`)
+    // console.log(srcNote)
+    // console.log(oldParent)
+    // console.log(newParent)
+
+    const saveSrcNote = this.#localDB.put({...srcNote})
+
+    let saveOldParentNote;
+    if (!localMovement) {
+      saveOldParentNote = this.#localDB.put({...oldParent})
+    } else {
+      saveOldParentNote = Promise.resolve();
+    }
+
+    const saveNewParentNote = this.#localDB.put({...newParent})
+
+    return Promise.all([saveSrcNote, saveOldParentNote, saveNewParentNote])
+  }
+
   removeNotesAndSubnotes(note: any) {
     this.#localDB.remove(note).then((r: any) => {
       console.log(r)

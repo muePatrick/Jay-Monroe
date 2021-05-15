@@ -43,18 +43,19 @@ new Vue({
   render: h => h(App)
 }).$mount("#app");
 
-
-import { toast } from 'bulma-toast'
+import { toast } from "bulma-toast";
 window.alert = (content: string, options = {}) => {
+  // HACK
+  // eslint-disable-next-line
   const defaultOptions: any = {
     message: content,
-    type: 'is-success',
+    type: "is-success",
     dismissible: false,
     pauseOnHover: true,
-    "duration": 2500,
-    "position": "top-right",
-    "closeOnClick": true
-  }
-  options = {...defaultOptions, ...options}
-  toast(options)
-}
+    duration: 2500,
+    position: "top-right",
+    closeOnClick: true
+  };
+  options = { ...defaultOptions, ...options };
+  toast(options);
+};
