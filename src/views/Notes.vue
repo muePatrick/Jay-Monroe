@@ -71,12 +71,18 @@ export default {
         }
         this.noChangeTimeout = setTimeout(() => {
           // BUG if no note is opened this results in a pouchDB Error because it is not a valid not (no id)
-          database.setNote(this.currentNote).then(() => {
-            console.log("Autosaved");
-            // TODO get li by ref=noteId and only refresh that item to save resources
-            this.noChangeTimeout = undefined;
-            this.forceRefresh = !this.forceRefresh; // HACK
-          });
+          database
+            .setNote({
+              _id: this.currentNote._id,
+              title: this.currentNote.title,
+              content: this.currentNote.content
+            })
+            .then(() => {
+              console.log("Autosaved");
+              // TODO get li by ref=noteId and only refresh that item to save resources
+              this.noChangeTimeout = undefined;
+              this.forceRefresh = !this.forceRefresh; // HACK
+            });
         }, 1000);
       }
     }
@@ -101,23 +107,29 @@ export default {
           );
         });
       } else {
-        database.setNote(this.currentNote).then(() => {
-          if (uuid == undefined) {
-            this.selectedNote = "";
-            this.currentNote = { title: "" };
-            this.$refs.toastuiEditor.invoke("setMarkdown", "", "false");
-            return true;
-          }
-          database.getNoteById(uuid).then(note => {
-            this.currentNote = note;
-            this.selectedNote = uuid;
-            this.$refs.toastuiEditor.invoke(
-              "setMarkdown",
-              this.currentNote.content,
-              "false"
-            );
+        database
+          .setNote({
+            _id: this.currentNote._id,
+            title: this.currentNote.title,
+            content: this.currentNote.content
+          })
+          .then(() => {
+            if (uuid == undefined) {
+              this.selectedNote = "";
+              this.currentNote = { title: "" };
+              this.$refs.toastuiEditor.invoke("setMarkdown", "", "false");
+              return true;
+            }
+            database.getNoteById(uuid).then(note => {
+              this.currentNote = note;
+              this.selectedNote = uuid;
+              this.$refs.toastuiEditor.invoke(
+                "setMarkdown",
+                this.currentNote.content,
+                "false"
+              );
+            });
           });
-        });
       }
       return true;
     },
@@ -128,12 +140,18 @@ export default {
         this.noChangeTimeout = undefined;
       }
       this.noChangeTimeout = setTimeout(() => {
-        database.setNote(this.currentNote).then(() => {
-          console.log("Autosaved");
-          // TODO get li by ref=noteId and only refresh that item to save resources
-          this.noChangeTimeout = undefined;
-          this.forceRefresh = !this.forceRefresh; // HACK
-        });
+        database
+          .setNote({
+            _id: this.currentNote._id,
+            title: this.currentNote.title,
+            content: this.currentNote.content
+          })
+          .then(() => {
+            console.log("Autosaved");
+            // TODO get li by ref=noteId and only refresh that item to save resources
+            this.noChangeTimeout = undefined;
+            this.forceRefresh = !this.forceRefresh; // HACK
+          });
       }, 1000);
     },
     onNoteTitleChange() {

@@ -94,7 +94,7 @@ export default {
     },
     toggleNoteCollapse() {
       this.note["collapsed"] = this.note["collapsed"] == true ? false : true;
-      database.setNote(this.note);
+      database.setNote({ _id: this.note._id, collapsed: this.note.collapsed });
       this.forceRefresh = !this.forceRefresh; // HACK
     },
     addSubnote() {
@@ -102,9 +102,11 @@ export default {
       // both got "newId"s but when removing one the other did not appear in the subnote array
       database.addNoteUnder(this.note._id).then(newId => {
         this.note.subnotes.push(newId.id);
-        database.setNote(this.note).then(() => {
-          this.forceRefresh = !this.forceRefresh; // HACK
-        });
+        database
+          .setNote({ _id: this.note._id, subnotes: this.note.subnotes })
+          .then(() => {
+            this.forceRefresh = !this.forceRefresh; // HACK
+          });
       });
     },
     removeNote() {

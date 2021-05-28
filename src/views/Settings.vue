@@ -104,6 +104,7 @@ export default {
     },
     async reinitDatabase(destroy) {
       database.reinitDatabase(destroy);
+      if (destroy) window.alert("Database deleted");
     },
     retrieveData() {
       database.getNoteByIdAndRev(this.id, this.rev);
