@@ -44,6 +44,7 @@ new Vue({
 }).$mount("#app");
 
 import { toast } from "bulma-toast";
+import "./registerServiceWorker";
 window.alert = (content: string, options = {}) => {
   // HACK
   // eslint-disable-next-line
