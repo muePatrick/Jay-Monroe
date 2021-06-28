@@ -1,33 +1,40 @@
 <template>
   <div class="viewRoot">
-    <div class="columns">
-      <div class="column is-2">
-        <tv
-          :key="forceRefresh"
-          :user="user"
-          :selectedNote="selectedNote"
-          class="eighty-scrollable"
-          @selectNote="selectNote"
+    <div
+      class="has-background-primary openNotesMenuButton"
+      :class="{ openNotesMenuButtonHidden: showNotesMenu }"
+      @click="showNotesMenu = true"
+    >
+      <span class="icon is-large has-text-light">
+        <font-awesome-icon :icon="['fas', 'sticky-note']" />
+      </span>
+    </div>
+    <tv
+      :key="forceRefresh"
+      :user="user"
+      :selectedNote="selectedNote"
+      class="eighty-scrollable"
+      @selectNote="selectNote"
+      v-show="showNotesMenu"
+      @closeMenu="showNotesMenu = false"
+    />
+    <div class="notesPane" :class="{ lock: !selectedNote }">
+      <input
+        class="input is-medium"
+        type="text"
+        placeholder="Title"
+        ref="noteTitleInput"
+        v-model="currentNote.title"
+        @change="onNoteTitleChange"
+      />
+      <div class="editor">
+        <editor
+          ref="toastuiEditor"
+          class="space-out"
+          height="100%"
+          :options="editorOptions"
+          @change="onEditorChange"
         />
-      </div>
-      <div class="column" :class="{ lock: !selectedNote }">
-        <input
-          class="input is-medium"
-          type="text"
-          placeholder="Title"
-          ref="noteTitleInput"
-          v-model="currentNote.title"
-          @change="onNoteTitleChange"
-        />
-        <div class="editor">
-          <editor
-            ref="toastuiEditor"
-            class="space-out"
-            height="100%"
-            :options="editorOptions"
-            @change="onEditorChange"
-          />
-        </div>
       </div>
     </div>
   </div>
@@ -56,7 +63,8 @@ export default {
       },
       noChangeTimeout: undefined,
       forceRefresh: false,
-      loadingDone: false
+      loadingDone: false,
+      showNotesMenu: false
     };
   },
   computed: {},
@@ -173,9 +181,65 @@ div {
   border: 0;
 }
 
-.eighty-scrollable {
+.viewRoot {
+  /* display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center; */
+}
+
+.openNotesMenuButton {
+  --spacing: 25px;
+  --sizeing: 3rem;
+
+  border: 0;
+  padding: 0;
+  margin: 0;
+
+  width: var(--sizeing);
+  height: var(--sizeing);
+
+  position: fixed;
+  z-index: 10;
+  /* top: calc(calc(100vh - 52px) - var(--spacing)); */
+  bottom: var(--spacing);
+  left: var(--spacing);
+
+  border-radius: 1000px;
+
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+  cursor: pointer;
+
+  animation: openNotesMenuButtonAnimation 0.5s ease-in-out 0s both;
+}
+
+.openNotesMenuButtonHidden {
+  display: none;
+}
+
+@keyframes openNotesMenuButtonAnimation {
+  0% {
+    transform: translateY(100px);
+  }
+  50% {
+    transform: translateY(-50px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.notesPane {
+  /* border: solid;
+  border-color: greenyellow; */
   height: calc(100vh - 52px);
-  overflow-y: scroll;
+  width: 100%;
+}
+
+.eighty-scrollable {
+  /* height: calc(100vh - 52px);
+  overflow-y: scroll; */
 }
 
 .space-out {
