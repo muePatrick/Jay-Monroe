@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.c7f987f6a6df87fccb0fb73440fc7e67.js"
+  "precache-manifest.1e6a30b8048adfcca640040f12c47d5b.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "jaymonroe"});
