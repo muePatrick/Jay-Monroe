@@ -15,7 +15,8 @@ import {
   faCogs,
   faCaretDown,
   faCaretUp,
-  faPlus
+  faPlus,
+  faThumbtack
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -30,10 +31,15 @@ library.add(
   faComments,
   faCogs,
   faCaretDown,
-  faCaretUp
+  faCaretUp,
+  faThumbtack
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
+
+import VueAnimXYZ from "@animxyz/vue";
+import "@animxyz/core"; // Import css here if you haven't elsewhere
+Vue.use(VueAnimXYZ);
 
 Vue.config.productionTip = false;
 

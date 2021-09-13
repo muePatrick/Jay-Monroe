@@ -1,23 +1,31 @@
 <template>
-  <div class="viewRoot">
-    <div
-      class="has-background-primary openNotesMenuButton"
-      :class="{ openNotesMenuButtonHidden: showNotesMenu }"
-      @click="showNotesMenu = true"
+  <div :class="{ viewRoot: notesMenuDocked }">
+    <XyzTransition xyz="down-100% narrow duration-2">
+      <div
+        class="has-background-primary openNotesMenuButton"
+        v-if="!showNotesMenu && !notesMenuDocked"
+        @click="showNotesMenu = true"
+      >
+        <span class="icon is-large has-text-light">
+          <font-awesome-icon :icon="['fas', 'sticky-note']" />
+        </span>
+      </div>
+    </XyzTransition>
+    <XyzTransition
+      xyz="fade small-100% up-50% duration-2 origin-top"
+      :css="!notesMenuDocked"
     >
-      <span class="icon is-large has-text-light">
-        <font-awesome-icon :icon="['fas', 'sticky-note']" />
-      </span>
-    </div>
-    <tv
-      :key="forceRefresh"
-      :user="user"
-      :selectedNote="selectedNote"
-      class="eighty-scrollable"
-      @selectNote="selectNote"
-      v-show="showNotesMenu"
-      @closeMenu="showNotesMenu = false"
-    />
+      <notesmenu
+        :key="forceRefresh"
+        :selectedNote="selectedNote"
+        :floating="!notesMenuDocked"
+        class="eighty-scrollable"
+        @selectNote="selectNote"
+        v-if="showNotesMenu || notesMenuDocked"
+        @closeMenu="showNotesMenu = false"
+        @toggleDocked="handleNotesMenuDockedToggle"
+      />
+    </XyzTransition>
     <div class="notesPane" :class="{ lock: !selectedNote }">
       <input
         class="input is-medium"
@@ -33,6 +41,7 @@
           class="space-out"
           height="100%"
           :options="editorOptions"
+          :initialEditType="settingsWysiwyg"
           @change="onEditorChange"
         />
       </div>
@@ -42,20 +51,18 @@
 
 <script>
 import { Editor } from "@toast-ui/vue-editor";
-import Treeview from "@/components/Treeview";
-
-import fakeUser from "@/data/fakeUser";
+import NotesMenu from "@/components/NotesMenu";
 
 import database from "@/data/pouchdb";
+import store from "@/store/index.ts";
 
 export default {
   components: {
     editor: Editor,
-    tv: Treeview
+    notesmenu: NotesMenu
   },
   data() {
     return {
-      user: fakeUser,
       selectedNote: "",
       currentNote: { title: "" },
       editorOptions: {
@@ -67,7 +74,14 @@ export default {
       showNotesMenu: false
     };
   },
-  computed: {},
+  computed: {
+    notesMenuDocked() {
+      return store.state.settingsNotesMenuDocked;
+    },
+    settingsWysiwyg() {
+      return store.state.settingsWysiwyg;
+    }
+  },
   watch: {
     currentNote: {
       deep: true,
@@ -164,6 +178,9 @@ export default {
     },
     onNoteTitleChange() {
       console.log(this.$refs.noteTitleInput);
+    },
+    handleNotesMenuDockedToggle() {
+      store.commit("settingsNotesMenuDocked", !this.notesMenuDocked);
     }
   }
 };
@@ -182,10 +199,10 @@ div {
 }
 
 .viewRoot {
-  /* display: flex;
+  display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center; */
+  align-items: center;
 }
 
 .openNotesMenuButton {
@@ -210,24 +227,6 @@ div {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
   cursor: pointer;
-
-  animation: openNotesMenuButtonAnimation 0.5s ease-in-out 0s both;
-}
-
-.openNotesMenuButtonHidden {
-  display: none;
-}
-
-@keyframes openNotesMenuButtonAnimation {
-  0% {
-    transform: translateY(100px);
-  }
-  50% {
-    transform: translateY(-50px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
 }
 
 .notesPane {

@@ -10,6 +10,7 @@
     "css-build": "node-sass --omit-source-map-url src/sass/bulma.scss src/css/bulma.css"
   },
   "dependencies": {
+    "@animxyz/vue": "^0.6.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.34",
     "@fortawesome/free-solid-svg-icons": "^5.15.2",
     "@fortawesome/vue-fontawesome": "^2.0.2",

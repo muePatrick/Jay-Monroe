@@ -1,5 +1,8 @@
 <template>
-  <div class="viewRoot" ref="viewRoot">
+  <div
+    :class="{ viewRootFloating: floating, viewRootFixed: !floating }"
+    ref="viewRoot"
+  >
     <div class="menuHeader">
       <p class="menu-label is-unselectable">
         Notes
@@ -9,24 +12,13 @@
           style="cursor: pointer;"
         />
       </p>
-      <button class="delete menuClose" @click="closeMenu"></button>
+      <button
+        v-if="floating"
+        class="delete menuClose"
+        @click="closeMenu"
+      ></button>
     </div>
     <aside class="menu eighty-scrollable">
-      <!-- <p class="menu-label is-unselectable" v-if="settingsShowUser">Users</p>
-      <ul class="menu-list" v-if="settingsShowUser">
-        <li v-for="(user, userId) in user" :key="userId">
-          <a
-            ><span
-              class="icon is-small"
-              :class="{ 'has-text-success': user.online }"
-            >
-              <font-awesome-icon :icon="['fas', 'user']" /> </span
-            >{{ user.name }}</a
-          >
-        </li>
-      </ul>
-      <p class="menu-label is-unselectable" v-if="settingsShowChat">Chat</p>
-      <chat v-if="settingsShowChat" /> -->
       <ul class="notesList" :key="forceRefresh">
         <tvul
           v-for="rootNote in rootNotes"
@@ -40,38 +32,36 @@
       </ul>
     </aside>
     <div class="menuFooter">
-      Lorem ipsum dolor sit amet.
+      Lorem
+      <span
+        class="icon is-small has-text-dark"
+        :class="{ toggleDockedIcon: floating, toggleDockedIconAlt: !floating }"
+        @click="toggleDocked"
+      >
+        <font-awesome-icon :icon="['fas', 'thumbtack']" />
+      </span>
     </div>
   </div>
 </template>
 
 <script>
 import TreeviewUl from "@/components/TreeviewUl";
-// import Chat from "@/components/Chat";
 
 import database from "@/data/pouchdb";
-import store from "@/store/index.ts";
 
 export default {
   components: {
     tvul: TreeviewUl
     // chat: Chat
   },
-  props: ["user", "selectedNote"],
+  props: ["selectedNote", "floating"],
   data() {
     return {
       rootNotes: [],
       forceRefresh: false
     };
   },
-  computed: {
-    settingsShowUser() {
-      return store.state.settingsShowUser;
-    },
-    settingsShowChat() {
-      return store.state.settingsShowChat;
-    }
-  },
+  computed: {},
   watch: {},
   created() {
     database.getRootIds().then(r => {
@@ -90,15 +80,6 @@ export default {
     selectNote(uuid) {
       this.$emit("selectNote", uuid);
     },
-    // removeNote(uuid) {
-    //   delete this.notes[uuid];
-    //   this.forceRefresh = !this.forceRefresh; //HACK
-    //   this.$emit("selectNote", undefined);
-    //   this.$emit("forceSave");
-    // },
-    // forceSave() {
-    //   this.$emit("forceSave");
-    // },
     doForceRefresh() {
       this.forceRefresh = !this.forceRefresh;
       this.$emit("doForceRefresh");
@@ -113,6 +94,9 @@ export default {
     closeMenu() {
       this.$emit("closeMenu");
     },
+    toggleDocked() {
+      this.$emit("toggleDocked");
+    },
     handleKeyDown(event) {
       console.log(event);
     }
@@ -121,7 +105,7 @@ export default {
 </script>
 
 <style scoped>
-.viewRoot {
+.viewRootFloating {
   --menu-height: max(70vh, 300px);
   --menu-width: max(20vw, 300px);
 
@@ -156,6 +140,42 @@ export default {
   align-items: left;
 }
 
+.viewRootFixed {
+  /* Somehow set this in the parent element */
+  --menu-height: calc(100vh - 52px);
+  --menu-width: max(20vw, 300px);
+
+  border: 0;
+  padding: 0;
+
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+
+  width: var(--menu-width);
+  height: var(--menu-height);
+
+  /* position: fixed;
+  z-index: 10;
+  top: calc(100vh / 2);
+  left: calc(100vw / 2); */
+
+  background-color: #ffffff;
+
+  border: none;
+  /* border-width: 2px;
+  border-color: #c5c5c5;
+  border-radius: 5px; */
+
+  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: left;
+}
+
 .menuHeader {
   width: 100%;
   height: 2em;
@@ -179,6 +199,8 @@ export default {
   width: 100%;
   height: 2em;
 
+  padding: 10px;
+
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   border-top: solid;
@@ -186,6 +208,11 @@ export default {
   border-color: #c5c5c5;
 
   background-color: #f7f7f7;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 
   text-align: center;
 }
@@ -207,5 +234,25 @@ export default {
 .menu {
   padding: 10px;
   height: 100%;
+}
+
+.toggleDockedIcon {
+  cursor: pointer;
+  transform: rotate(45deg);
+}
+
+.toggleDockedIcon:hover {
+  cursor: pointer;
+  transform: rotate(0deg);
+}
+
+.toggleDockedIconAlt {
+  cursor: pointer;
+  transform: rotate(0deg);
+}
+
+.toggleDockedIconAlt:hover {
+  cursor: pointer;
+  transform: rotate(45deg);
 }
 </style>

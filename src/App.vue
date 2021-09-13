@@ -9,7 +9,34 @@
       role="navigation"
       aria-label="main navigation"
     >
-      <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-brand">
+        <!-- <a class="navbar-item" href="https://bulma.io">
+          <img
+            src="https://bulma.io/images/bulma-logo.png"
+            width="112"
+            height="28"
+          />
+        </a> -->
+
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbarBasicExample"
+          @click="navbarExtended = !navbarExtended"
+          :class="{ 'is-active': navbarExtended }"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+      <div
+        id="navbarBasicExample"
+        class="navbar-menu"
+        :class="{ 'is-active': navbarExtended }"
+      >
         <div class="navbar-start">
           <router-link
             to="/"
@@ -31,6 +58,7 @@
             </span>
             <span class="is-unselectable">Chat</span>
           </router-link>
+          <!-- <hr class="navbar-divider"> -->
           <router-link
             to="/settings"
             class="navbar-item"
@@ -57,7 +85,8 @@ import database from "@/data/pouchdb";
 export default {
   data() {
     return {
-      loadingDone: false
+      loadingDone: false,
+      navbarExtended: false
     };
   },
   computed: {

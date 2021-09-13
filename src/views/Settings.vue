@@ -24,6 +24,28 @@
         />
         <label for="settingsShowChat">Show Chat in Treeview</label>
       </div>
+      <div class="field">
+        <input
+          id="settingsNotesMenuDocked"
+          type="checkbox"
+          name="settingsNotesMenuDocked"
+          class="switch is-rounded"
+          :checked="settingsNotesMenuDocked"
+          @change="changeSettingsNotesMenuDocked($event)"
+        />
+        <label for="settingsNotesMenuDocked">Dock Notes Menu</label>
+      </div>
+      <div class="field">
+        <input
+          id="settingsWysiwyg"
+          type="checkbox"
+          name="settingsWysiwyg"
+          class="switch is-rounded"
+          :checked="settingsWysiwyg"
+          @change="changeSettingsWysiwyg($event)"
+        />
+        <label for="settingsWysiwyg">Start Editor in Wysiwyg Mode</label>
+      </div>
     </div>
 
     <div class="box settingsBox">
@@ -89,6 +111,12 @@ export default {
     },
     settingsShowChat() {
       return store.state.settingsShowChat;
+    },
+    settingsNotesMenuDocked() {
+      return store.state.settingsNotesMenuDocked;
+    },
+    settingsWysiwyg() {
+      return store.state.settingsWysiwyg == "wysiwyg";
     }
   },
   watch: {},
@@ -101,6 +129,15 @@ export default {
     },
     changeSettingsShowChat(event) {
       store.commit("settingsShowChat", event.srcElement.checked);
+    },
+    changeSettingsNotesMenuDocked(event) {
+      store.commit("settingsNotesMenuDocked", event.srcElement.checked);
+    },
+    changeSettingsWysiwyg(event) {
+      store.commit(
+        "settingsWysiwyg",
+        event.srcElement.checked ? "wysiwyg" : "markdown"
+      );
     },
     async reinitDatabase(destroy) {
       database.reinitDatabase(destroy);
