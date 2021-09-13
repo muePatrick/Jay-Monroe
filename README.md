@@ -1,24 +1,9 @@
-# rhmi
+# Jay Monroe
 
-## Project setup
-```
-npm install
-```
+`This project is still in a very early stage`
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+Jay Monroe is yet another note taking app. It is inspired by Joplin, Notion and Trilium.
 
-### Compiles and minifies for production
-```
-npm run build
-```
+The repo is now open so the pwa on github pages can be played around with.
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+More TBD
