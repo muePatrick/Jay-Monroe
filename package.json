@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "vue-cli-service serve --port 5500",
     "serve": "vue-cli-service serve --port 5500",
     "serve-pwa": "vue-cli-service build && cd dist && python -m http.server 5500",
     "build": "vue-cli-service build",

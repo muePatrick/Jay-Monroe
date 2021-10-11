@@ -50,6 +50,24 @@
 
     <div class="box settingsBox">
       <label class="label">Database Settings</label>
+      <div class="field has-addons">
+        <p class="control">
+          <button class="button" @click="downloadFile">
+            <span class="icon is-small">
+              <font-awesome-icon :icon="['fas', 'file-download']" />
+            </span>
+            <span>Download Database Dump</span>
+          </button>
+        </p>
+        <p class="control">
+          <button class="button" @click="uploadFile">
+            <span class="icon is-small">
+              <font-awesome-icon :icon="['fas', 'file-upload']" />
+            </span>
+            <span>Upload Database Backup</span>
+          </button>
+        </p>
+      </div>
       <div class="field">
         <div class="control">
           <button class="button is-primary" @click="reinitDatabase(false)">
@@ -145,6 +163,12 @@ export default {
     },
     retrieveData() {
       database.getNoteByIdAndRev(this.id, this.rev);
+    },
+    downloadFile() {
+      database.downloadFile();
+    },
+    uploadFile() {
+      database.uploadFile();
     }
   }
 };

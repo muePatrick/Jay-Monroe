@@ -190,6 +190,65 @@ export default new (class {
     })
   }
 
+  uploadFile () {
+    // uploader script
+    const element = document.createElement("input");
+    element.setAttribute("type", "file");
+    element.setAttribute("name", "dashboardJson");
+    element.style.display = "none";
+    document.body.appendChild(element);
+    element.addEventListener(
+      "change",
+      () => {
+        const file = element.files[0];
+        const reader = new FileReader();
+        reader.addEventListener(
+          "load",
+          () => {
+            const newData = JSON.parse(reader.result);
+            // custom code here
+            this.#localDB.bulkDocs(newData, {"new_edits": false})
+            // end of custome code
+            element.value = "";
+          },
+          false
+        );
+        reader.readAsText(file);
+      },
+      false
+    );
+    element.click();
+    document.body.removeChild(element);
+    // eof
+  }
+
+  downloadFile () {
+    this.#localDB.allDocs({
+      "include_docs": true,
+      "attachments": false
+    }).then(function (result: any) {
+      // set these variables
+      const content = JSON.stringify(result.rows.map(({doc}) => doc));
+      const filename = "download.json";
+      const mimetype = "application/json"; // set to text/plain if nothing special is needed
+  
+      // leave this as is
+      const element = document.createElement("a");
+      element.setAttribute(
+        "href",
+        "data:" + mimetype + ";charset=utf-8," + encodeURIComponent(content)
+      );
+      element.setAttribute("download", filename);
+      element.style.display = "none";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+      // eof
+    }).catch(function (err: any) {
+      console.log(err);
+    });
+  }
+
   async addTest() {
     this.#localDB.put({
       _id: "1111",
