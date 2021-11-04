@@ -200,15 +200,18 @@ export default new (class {
     element.addEventListener(
       "change",
       () => {
-        const file = element.files[0];
+        const nonNullElement:any = element || [new File([], "")] // HACK stupid workaround course of stupid ts
+        const file = nonNullElement.files[0];
         const reader = new FileReader();
         reader.addEventListener(
           "load",
           () => {
-            const newData = JSON.parse(reader.result);
+            // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+            const nonNullResult:string = String(reader.result) // HACK Fuck me!!!
+            const newData = JSON.parse(nonNullResult);
             // custom code here
             this.#localDB.bulkDocs(newData, {"new_edits": false})
-            // end of custome code
+            // end of custom code
             element.value = "";
           },
           false
@@ -228,9 +231,9 @@ export default new (class {
       "attachments": false
     }).then(function (result: any) {
       // set these variables
-      const content = JSON.stringify(result.rows.map(({doc}) => doc));
+      const content = JSON.stringify(result.rows.map(({doc}: {doc: any}) => doc)); // HACK WHAT THE FUCK IS WRONG WITH YOU???
       const filename = "download.json";
-      const mimetype = "application/json"; // set to text/plain if nothing special is needed
+      const mimetype = "application/json";
   
       // leave this as is
       const element = document.createElement("a");

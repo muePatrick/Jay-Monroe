@@ -28,7 +28,7 @@
     </XyzTransition>
     <div class="notesPane" :class="{ lock: !selectedNote }">
       <input
-        class="input is-medium"
+        class="input is-medium title-input"
         type="text"
         placeholder="Title"
         ref="noteTitleInput"
@@ -255,5 +255,23 @@ div {
 .editor {
   height: calc(100% - 50px);
   overflow-y: hidden;
+}
+
+.title-input {
+  border-radius: 0;
+}
+
+.title-input:focus {
+  border-color: rgb(219, 219, 219);
+  -webkit-box-shadow: 0px 0px 0px 0px #ddd;
+  -moz-box-shadow: 0px 0px 0px 0px #ddd;
+  box-shadow: 0px 0px 0px 0px #ddd;
+}
+
+.title-input:hover {
+  border-color: rgb(219, 219, 219);
+  -webkit-box-shadow: 0px 0px 0px 0px #ddd;
+  -moz-box-shadow: 0px 0px 0px 0px #ddd;
+  box-shadow: 0px 0px 0px 0px #ddd;
 }
 </style>
