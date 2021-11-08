@@ -11,7 +11,12 @@
           style="cursor: pointer"
         />
       </div>
-      <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+      <div
+        class="dropdown-menu"
+        id="dropdown-menu3"
+        role="menu"
+        ref="dropdownmenu"
+      >
         <div class="dropdown-content">
           <a href="#" class="dropdown-item" @click="addSubnote()">
             Add Subnote
@@ -25,6 +30,13 @@
       </div>
     </div>
 
+    <font-awesome-icon
+      v-if="hasSubnotes"
+      class="smaller-icon"
+      :icon="['fas', note.collapsed ? 'caret-up' : 'caret-down']"
+      @click="toggleNoteCollapse()"
+      style="cursor: pointer"
+    />
     <a
       :class="{ 'is-active': note._id == selectedNote }"
       v-on:click="selectNote(note._id)"
@@ -36,16 +48,8 @@
       @dragleave="doDragLeave"
       @drop="doDrop"
       @contextmenu="openMenu"
-      @blur="closeMenu"
       >{{ note.title }}</a
     >
-    <font-awesome-icon
-      v-if="hasSubnotes"
-      class="smaller-icon"
-      :icon="['fas', note.collapsed ? 'caret-up' : 'caret-down']"
-      @click="toggleNoteCollapse()"
-      style="cursor: pointer"
-    />
 
     <ul class="notesList" v-if="!note.collapsed">
       <tvul
@@ -158,7 +162,13 @@ export default {
     openMenu(event) {
       event.preventDefault();
       // BUG Adding new notes if menu is open via click and not hover, does not work
-      this.menuOpen = true;
+      // this.menuOpen = true;
+
+      // window.addEventListener("click", function(e) {
+      // if (!this.$refs.dropdownmenu.contains(e.target)) {
+      //   console.log("clicked outside");
+      // }
+      // });
     },
     closeMenu(event) {
       event.preventDefault();

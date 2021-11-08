@@ -99,7 +99,7 @@ export default {
     database.connect().then(() => {
       setTimeout(() => {
         this.loadingDone = true;
-      }, 500);
+      }, 100);
     });
     return true;
   },
